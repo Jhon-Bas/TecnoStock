@@ -1,10 +1,21 @@
+
 package pe.tecnostock;
 
-/**
- * Hello world!
- */
+import javax.swing.SwingUtilities;
+import com.formdev.flatlaf.FlatLightLaf;
+
+import pe.tecnostock.view.MainFrame;
+
 public class App {
+
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+
+        FlatLightLaf.setup();
+
+        SwingUtilities.invokeLater(() -> {
+            MainFrame ventana = new MainFrame();
+            ventana.setVisible(true);
+        });
+
     }
 }
