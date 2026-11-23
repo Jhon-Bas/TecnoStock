@@ -1,0 +1,85 @@
+@startuml
+title TecnoStock - Módulo Administrador\nDiagrama arquitectónico de clases
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+left to right direction
+
+package "Presentación" {
+    class MainFrame
+    class EmployeesPanel
+    class PasswordResetPanel
+    class AuditPanel
+    class LoginFrame
+    class ChangePasswordFrame
+}
+
+package "Servicios compartidos" {
+    class AuthService
+    class AuthorizationService
+    class SessionService
+    class PasswordChangeService
+}
+
+package "Servicios administrativos" {
+    class EmployeeService
+    class PasswordResetService
+    class AuditService
+    class AdminDashboardService
+}
+
+package "Repositorios" {
+    class UserRepository
+    class EmployeeRepository
+    class AuditRepository
+    class AdminDashboardRepository
+}
+
+package "Dominio" {
+    class User
+    enum Role {
+        ADMIN
+        GERENTE
+        EMPLEADO
+    }
+}
+
+package "Seguridad" {
+    class PasswordUtil
+}
+
+MainFrame ..> EmployeesPanel : presenta
+MainFrame ..> PasswordResetPanel : presenta
+MainFrame ..> AuditPanel : presenta
+
+EmployeesPanel ..> EmployeeService : utiliza
+PasswordResetPanel ..> PasswordResetService : utiliza
+AuditPanel ..> AuditService : utiliza
+
+LoginFrame ..> AuthService : autentica
+ChangePasswordFrame ..> PasswordChangeService : solicita cambio
+
+EmployeeService ..> EmployeeRepository : persistencia
+PasswordResetService ..> UserRepository : consulta
+AuditService ..> AuditRepository : consulta
+AdminDashboardService ..> AdminDashboardRepository : consulta
+
+AuthService ..> UserRepository : consulta
+SessionService ..> UserRepository : verifica
+
+EmployeeService ..> AuthorizationService : permisos
+PasswordResetService ..> AuthorizationService : permisos
+AuditService ..> AuthorizationService : permisos
+
+AuthService ..> PasswordUtil : verificación
+
+User --> Role : rol asignado
+
+note bottom
+Diagrama de alto nivel.
+Representa responsabilidades y colaboraciones conceptuales.
+Verificar firmas y dependencias contra el código
+antes de usarlo como UML definitivo.
+end note
+
+@enduml
