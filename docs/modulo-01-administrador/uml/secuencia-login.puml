@@ -1,0 +1,42 @@
+@startuml
+title TecnoStock - Inicio de sesión\nSecuencia conceptual
+
+actor "Usuario" as User
+boundary "LoginFrame" as Login
+control "AuthService" as Auth
+entity "UserRepository" as Repo
+control "PasswordUtil" as Password
+boundary "MainFrame / menú de rol" as Main
+
+User -> Login : Ingresa usuario y contraseña
+Login -> Auth : Solicita autenticación
+Auth -> Repo : Consulta la cuenta
+Repo --> Auth : Datos de usuario y credenciales
+
+alt Cuenta encontrada y habilitada
+    Auth -> Password : Verifica la contraseña
+    Password --> Auth : Resultado
+
+    alt Credenciales correctas
+        Auth --> Login : Usuario autenticado
+        alt Requiere cambio de contraseña
+            Login --> User : Solicita cambio obligatorio
+        else Puede acceder
+            Login -> Main : Abre interfaz correspondiente
+            Main --> User : Presenta opciones por rol
+        end
+    else Contraseña incorrecta
+        Auth --> Login : Autenticación rechazada
+        Login --> User : Muestra mensaje de error
+    end
+else Cuenta no disponible
+    Auth --> Login : Autenticación rechazada
+    Login --> User : Muestra mensaje de error
+end
+
+note bottom
+Secuencia funcional de alto nivel.
+No representa firmas ni todos los métodos internos.
+end note
+
+@enduml
