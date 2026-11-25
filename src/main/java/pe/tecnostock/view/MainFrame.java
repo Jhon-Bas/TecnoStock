@@ -1,6 +1,8 @@
 
 package pe.tecnostock.view;
 
+import pe.tecnostock.modules.inventory.view.InventoryPanel;
+
 import pe.tecnostock.modules.products.view.ProductsPanel;
 
 import pe.tecnostock.modules.customers.view.CustomersPanel;
@@ -194,7 +196,7 @@ public class MainFrame extends JFrame {
             addSidebarButton(
                     menu,
                     "Inventario",
-                    () -> showPendingModule("Inventario")
+                    () -> showInventoryPanel()
             );
 
             addSidebarButton(
@@ -833,6 +835,32 @@ private void showAuditPanel() {
 
         contentPanel.add(
                 new ProductsPanel(currentUser),
+                BorderLayout.CENTER
+        );
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    /**
+     * Presenta el control de inventario dentro de la ventana principal.
+     * Permite gestionar existencias y consultar movimientos
+     * según los permisos del usuario autenticado.
+     */
+    private void showInventoryPanel() {
+
+        contentPanel.removeAll();
+
+        contentPanel.add(
+                createHeader(
+                        "Gestión de inventario",
+                        "Control de existencias y movimientos de stock"
+                ),
+                BorderLayout.NORTH
+        );
+
+        contentPanel.add(
+                new InventoryPanel(currentUser),
                 BorderLayout.CENTER
         );
 
