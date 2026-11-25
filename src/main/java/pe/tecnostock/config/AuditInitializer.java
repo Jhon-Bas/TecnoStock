@@ -18,15 +18,25 @@ public final class AuditInitializer {
         // Evita crear instancias de esta clase.
     }
 
+    /** Inicializa la estructura usando una conexión propia. */
+    public static void initialize() throws SQLException {
+        try (Connection connection = Database.getConnection()) {
+            initialize(connection);
+        }
+    }
+
     /**
      * Inicializa la auditoría sin borrar registros.
      *
      * @throws SQLException Si ocurre un error en SQLite.
+     *
+     * Se ejecuta dentro de una migración: el migrador abre
+     * la transacción y la confirma o la revierte.
      */
-    public static void initialize() throws SQLException {
+    public static void initialize(Connection connection)
+            throws SQLException {
 
-        try (Connection connection = Database.getConnection();
-             Statement statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
 
             // Conserva el historial de operaciones.
             statement.executeUpdate("""
@@ -142,9 +152,5 @@ public final class AuditInitializer {
                 ON audit_events(created_at DESC, id DESC)
                 """);
         }
-
-        System.out.println(
-                "Sistema de auditoría inicializado correctamente."
-        );
     }
 }
