@@ -1,15 +1,9 @@
 package pe.tecnostock.modules.sales.view;
 
+import pe.tecnostock.modules.sales.facade.SalesFacade;
+
 import pe.tecnostock.model.Sale;
 import pe.tecnostock.model.User;
-import pe.tecnostock.modules.customers.repository.CustomerRepository;
-import pe.tecnostock.modules.inventory.repository.InventoryRepository;
-import pe.tecnostock.modules.inventory.service.InventoryService;
-import pe.tecnostock.modules.products.repository.ProductRepository;
-import pe.tecnostock.modules.products.repository.ServiceItemRepository;
-import pe.tecnostock.modules.sales.repository.SaleRepository;
-import pe.tecnostock.modules.sales.service.SaleService;
-import pe.tecnostock.service.AuthorizationService;
 import pe.tecnostock.view.Styles;
 
 import javax.swing.*;
@@ -23,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 /** Consulta de boletas emitidas. Reutiliza el servicio de ventas y sus permisos. */
 public final class ReceiptsPanel extends JPanel {
     private final User currentUser;
-    private final SaleService service;
+    private final SalesFacade facade = new SalesFacade();
     private final DefaultTableModel model = new DefaultTableModel(
             new Object[]{"N.º", "Boleta", "Cliente", "Documento", "Fecha", "Total", "Estado"}, 0) {
         @Override public boolean isCellEditable(int row, int column) { return false; }
@@ -33,11 +27,7 @@ public final class ReceiptsPanel extends JPanel {
 
     public ReceiptsPanel(User currentUser) {
         this.currentUser = currentUser;
-        AuthorizationService authorization = new AuthorizationService();
-        ProductRepository products = new ProductRepository();
-        this.service = new SaleService(new SaleRepository(), new CustomerRepository(),
-                products, new ServiceItemRepository(),
-                new InventoryService(new InventoryRepository(), products, authorization), authorization);
+        
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(12, 12, 12, 12));
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -58,7 +48,7 @@ public final class ReceiptsPanel extends JPanel {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         new SwingWorker<List<Sale>, Void>() {
             @Override protected List<Sale> doInBackground() throws SQLException {
-                return service.listSales(currentUser);
+                return facade.listSales(currentUser);
             }
             @Override protected void done() {
                 setCursor(Cursor.getDefaultCursor());

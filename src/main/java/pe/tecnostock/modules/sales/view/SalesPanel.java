@@ -1,14 +1,9 @@
 package pe.tecnostock.modules.sales.view;
 
+import pe.tecnostock.modules.sales.facade.SalesFacade;
+
 import pe.tecnostock.model.*;
 import pe.tecnostock.modules.sales.service.SaleService;
-import pe.tecnostock.modules.sales.repository.SaleRepository;
-import pe.tecnostock.modules.customers.repository.CustomerRepository;
-import pe.tecnostock.modules.inventory.repository.InventoryRepository;
-import pe.tecnostock.modules.inventory.service.InventoryService;
-import pe.tecnostock.modules.products.repository.ProductRepository;
-import pe.tecnostock.modules.products.repository.ServiceItemRepository;
-import pe.tecnostock.service.AuthorizationService;
 import pe.tecnostock.security.Permission;
 import pe.tecnostock.security.PermissionPolicy;
 import pe.tecnostock.view.Styles;
@@ -49,12 +44,7 @@ public class SalesPanel extends JPanel {
     }
 
     private final User currentUser;
-    private final SaleService service = new SaleService(
-            new SaleRepository(), new CustomerRepository(),
-            new ProductRepository(), new ServiceItemRepository(),
-            new InventoryService(new InventoryRepository(),
-                    new ProductRepository(), new AuthorizationService()),
-            new AuthorizationService());
+    private final SalesFacade facade = new SalesFacade();
 
     private final JComboBox<CustomerOption> cmbCliente = new JComboBox<>();
     private final JComboBox<CommercialItem> cmbItem = new JComboBox<>();
@@ -252,8 +242,9 @@ public class SalesPanel extends JPanel {
             List<CommercialItem> catalogo;
             @Override protected Void doInBackground() throws Exception {
                 if (PermissionPolicy.has(currentUser.getRole(), Permission.REGISTER_SALES)) {
-                    customers = service.listCustomers(currentUser);
-                    catalogo = service.listCatalog(currentUser, "");
+                    var data = facade.prepareSale(currentUser);
+                    customers = data.customers();
+                    catalogo = data.catalog();
                 }
                 return null;
             }
@@ -278,7 +269,7 @@ public class SalesPanel extends JPanel {
 
     private void loadCatalog() {
         try {
-            List<CommercialItem> items = service.listCatalog(currentUser, txtBuscar.getText());
+            List<CommercialItem> items = facade.searchCatalog(currentUser, txtBuscar.getText());
             cmbItem.removeAllItems();
             for (CommercialItem item : items) cmbItem.addItem(item);
             cmbItem.setRenderer(new DefaultListCellRenderer() {
@@ -396,7 +387,7 @@ public class SalesPanel extends JPanel {
         btnRegistrar.setEnabled(false);
         new SwingWorker<Sale, Void>() {
             @Override protected Sale doInBackground() throws Exception {
-                return service.registerSale(currentUser, opcion.customer().getId(),
+                return facade.registerSale(currentUser, opcion.customer().getId(),
                         request, discount);
             }
             @Override protected void done() {
@@ -434,7 +425,7 @@ public class SalesPanel extends JPanel {
         if (!puedeConsultar) return;
         new SwingWorker<List<Sale>, Void>() {
             @Override protected List<Sale> doInBackground() throws Exception {
-                return service.listSales(currentUser);
+                return facade.listSales(currentUser);
             }
             @Override protected void done() {
                 try {
