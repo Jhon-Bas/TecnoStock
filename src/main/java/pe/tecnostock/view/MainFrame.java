@@ -1,6 +1,9 @@
 
 package pe.tecnostock.view;
 
+import pe.tecnostock.modules.sales.view.SalesPanel;
+import pe.tecnostock.modules.sales.view.ReceiptsPanel;
+
 import pe.tecnostock.modules.inventory.view.InventoryPanel;
 
 import pe.tecnostock.modules.products.view.ProductsPanel;
@@ -165,10 +168,10 @@ public class MainFrame extends JFrame {
                 () -> showCustomersPanel());
 
         addSidebarButton(menu, "Ventas",
-                () -> showPendingModule("Ventas"));
+                () -> showSalesPanel());
 
         addSidebarButton(menu, "Boletas",
-                () -> showPendingModule("Boletas"));
+                () -> showReceiptsPanel());
 
         if (role == Role.EMPLEADO) {
 
@@ -181,7 +184,7 @@ public class MainFrame extends JFrame {
             addSidebarButton(
                     menu,
                     "Mis ventas",
-                    () -> showPendingModule("Mis ventas")
+                    () -> showSalesPanel()
             );
         }
 
@@ -861,6 +864,56 @@ private void showAuditPanel() {
 
         contentPanel.add(
                 new InventoryPanel(currentUser),
+                BorderLayout.CENTER
+        );
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    /**
+     * Presenta el registro de ventas dentro de la ventana principal.
+     * Conserva la sesión y los permisos del usuario autenticado.
+     */
+    private void showSalesPanel() {
+
+        contentPanel.removeAll();
+
+        contentPanel.add(
+                createHeader(
+                        "Gestión de ventas",
+                        "Registro de operaciones comerciales"
+                ),
+                BorderLayout.NORTH
+        );
+
+        contentPanel.add(
+                new SalesPanel(currentUser),
+                BorderLayout.CENTER
+        );
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    /**
+     * Presenta la consulta de comprobantes de venta.
+     * Permite acceder a las operaciones disponibles según el rol.
+     */
+    private void showReceiptsPanel() {
+
+        contentPanel.removeAll();
+
+        contentPanel.add(
+                createHeader(
+                        "Boletas de venta",
+                        "Consulta y exportación de comprobantes"
+                ),
+                BorderLayout.NORTH
+        );
+
+        contentPanel.add(
+                new ReceiptsPanel(currentUser),
                 BorderLayout.CENTER
         );
 
