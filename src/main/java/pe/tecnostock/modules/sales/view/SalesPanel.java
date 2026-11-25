@@ -123,6 +123,15 @@ public class SalesPanel extends JPanel {
         add(superior, BorderLayout.CENTER);
         add(buildHistory(), BorderLayout.SOUTH);
 
+        // La boleta es el identificador comercial visible.
+        tablaHistorial.getColumnModel().getColumn(0)
+                .setHeaderValue("ID");
+
+        if (currentUser.getRole() != pe.tecnostock.model.Role.ADMIN) {
+            tablaHistorial.removeColumn(
+                    tablaHistorial.getColumnModel().getColumn(0));
+        }
+
         btnAgregar.addActionListener(e -> addItem());
         btnQuitar.addActionListener(e -> removeItem());
         btnUndo.addActionListener(e -> {

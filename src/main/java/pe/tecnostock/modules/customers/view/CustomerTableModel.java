@@ -13,7 +13,7 @@ class CustomerTableModel extends AbstractTableModel {
 
     private static final String[] COLUMNS = {
             "Documento", "Tipo", "Nombre / Razón social",
-            "Teléfono", "Correo", "Estado"
+            "Teléfono", "Correo", "Estado", "ID"
     };
 
     private List<Customer> customers = new ArrayList<>();
@@ -58,7 +58,7 @@ class CustomerTableModel extends AbstractTableModel {
             case 4 -> customer.getEmail() == null
                     ? "" : customer.getEmail();
             case 5 -> customer.isActive() ? "Activo" : "Inactivo";
-            default -> "";
+            case 6 -> customer.getId(); default -> "";
         };
     }
 }

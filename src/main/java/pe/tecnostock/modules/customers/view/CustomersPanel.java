@@ -157,6 +157,13 @@ public class CustomersPanel extends JPanel {
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setRowHeight(26);
+
+        // El identificador interno solo es visible para el administrador.
+        if (currentUser.getRole() != pe.tecnostock.model.Role.ADMIN) {
+            table.removeColumn(table.getColumn("ID"));
+        } else {
+            table.moveColumn(table.getColumnCount() - 1, 0);
+        }
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 selectRow();

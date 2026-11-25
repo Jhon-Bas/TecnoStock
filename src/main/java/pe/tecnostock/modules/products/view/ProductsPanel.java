@@ -75,7 +75,7 @@ public class ProductsPanel extends JPanel {
     private final DefaultTableModel tableModel = new DefaultTableModel(
             new String[] {
                     "Tipo", "Código", "Nombre", "Categoría",
-                    "P. compra", "P. venta", "Stock", "Estado"
+                    "P. compra", "P. venta", "Stock", "Estado", "ID"
             }, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
@@ -194,6 +194,13 @@ public class ProductsPanel extends JPanel {
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setRowHeight(26);
+
+        // Conserva el ID en el modelo sin exponerlo a otros roles.
+        if (currentUser.getRole() != pe.tecnostock.model.Role.ADMIN) {
+            table.removeColumn(table.getColumn("ID"));
+        } else {
+            table.moveColumn(table.getColumnCount() - 1, 0);
+        }
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 selectRow();
@@ -270,11 +277,11 @@ public class ProductsPanel extends JPanel {
                     p.getType(), p.getCode(), p.getName(),
                     p.getCategory().name(),
                     soles(p.getPurchasePrice()), soles(p.getSalePrice()),
-                    p.getCurrentStock(), estado
+                    p.getCurrentStock(), estado, p.getId()
             };
             case ServiceItem s -> new Object[] {
                     s.getType(), s.getCode(), s.getName(),
-                    "—", "—", soles(s.getSalePrice()), "—", estado
+                    "—", "—", soles(s.getSalePrice()), "—", estado, s.getId()
             };
         };
     }
