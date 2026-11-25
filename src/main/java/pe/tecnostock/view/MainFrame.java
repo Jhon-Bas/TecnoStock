@@ -1,6 +1,8 @@
 
 package pe.tecnostock.view;
 
+import pe.tecnostock.modules.reports.view.ReportsPanel;
+
 import pe.tecnostock.modules.sales.view.SalesPanel;
 import pe.tecnostock.modules.sales.view.ReceiptsPanel;
 
@@ -205,7 +207,7 @@ public class MainFrame extends JFrame {
             addSidebarButton(
                     menu,
                     "Reportes",
-                    () -> showPendingModule("Reportes")
+                    () -> showReportsPanel()
             );
         }
 
@@ -921,50 +923,16 @@ private void showAuditPanel() {
         contentPanel.repaint();
     }
 
-    private void showPendingModule(String module) {
-
+    /** Presenta los reportes comerciales en la ventana principal. */
+    private void showReportsPanel() {
         contentPanel.removeAll();
-
-        contentPanel.add(
-                createHeader(
-                        module,
-                        "Módulo en desarrollo"
-                ),
-                BorderLayout.NORTH
-        );
-
-        JPanel placeholder = new JPanel(
-                new BorderLayout()
-        );
-
-        placeholder.setBackground(Color.WHITE);
-        placeholder.setBorder(
-                new EmptyBorder(35, 35, 35, 35)
-        );
-
-        JLabel message = new JLabel(
-                "Este módulo se implementará próximamente."
-        );
-
-        message.setFont(
-                new Font("SansSerif", Font.PLAIN, 17)
-        );
-
-        message.setForeground(MUTED);
-
-        placeholder.add(
-                message,
-                BorderLayout.NORTH
-        );
-
-        contentPanel.add(
-                placeholder,
-                BorderLayout.CENTER
-        );
-
+        contentPanel.add(createHeader("Reportes de ventas", "Consulta de indicadores y exportación"), BorderLayout.NORTH);
+        contentPanel.add(new ReportsPanel(currentUser), BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
+
+    
 
     /**
      * Revisa la sesión antes de permitir la navegación.
