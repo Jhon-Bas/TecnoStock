@@ -668,7 +668,7 @@ public class MainFrame extends JFrame {
                 } catch (ExecutionException e) {
 
                     showStatisticsError();
-                    e.printStackTrace();
+                    java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, "Error durante la operacion.", e);
                 }
             }
         };

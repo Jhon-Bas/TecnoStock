@@ -89,7 +89,7 @@ public class App {
                     JOptionPane.ERROR_MESSAGE
             );
 
-            e.printStackTrace();
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, "Error durante la operacion.", e);
         }
     }
 }

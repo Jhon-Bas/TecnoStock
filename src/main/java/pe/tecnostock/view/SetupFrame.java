@@ -124,7 +124,7 @@ public class SetupFrame extends JFrame {
                     JOptionPane.ERROR_MESSAGE
             );
 
-            e.printStackTrace();
+            java.util.logging.Logger.getLogger(SetupFrame.class.getName()).log(java.util.logging.Level.SEVERE, "Error durante la operacion.", e);
 
         } finally {
             Arrays.fill(password, '\0');
