@@ -2,18 +2,16 @@ package pe.tecnostock.modules.products.factory;
 
 import pe.tecnostock.model.Category;
 import pe.tecnostock.model.CommercialItem;
-import pe.tecnostock.model.Product;
-import pe.tecnostock.model.ServiceItem;
 import pe.tecnostock.model.ItemType;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * Patrón Factory: crea el tipo correcto de elemento comercial.
+ * Selector de creadores concretos del patrón Factory Method.
  *
  * El formulario y el servicio entregan el tipo elegido y los datos;
- * solo esta clase decide si instancia un Producto o un Servicio.
+ * esta clase selecciona el creador; cada creador instancia su tipo.
  * Así, el resto del sistema no depende de las clases concretas ni
  * repite las reglas de creación.
  */
@@ -47,27 +45,10 @@ public class CommercialItemFactory {
         Objects.requireNonNull(type, "El tipo es obligatorio.");
         Objects.requireNonNull(data, "Los datos son obligatorios.");
 
-        return switch (type) {
-            case PRODUCT -> new Product(
-                    data.id(),
-                    data.code(),
-                    data.name(),
-                    data.description(),
-                    data.salePrice(),
-                    data.purchasePrice(),
-                    0,
-                    data.minimumStock(),
-                    data.category(),
-                    true
-            );
-            case SERVICE -> new ServiceItem(
-                    data.id(),
-                    data.code(),
-                    data.name(),
-                    data.description(),
-                    data.salePrice(),
-                    true
-            );
+        ItemCreator creator = switch (type) {
+            case PRODUCT -> new ProductCreator();
+            case SERVICE -> new ServiceItemCreator();
         };
+        return creator.create(data);
     }
 }
