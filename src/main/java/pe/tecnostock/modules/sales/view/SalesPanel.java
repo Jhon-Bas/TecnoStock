@@ -1,4 +1,6 @@
 package pe.tecnostock.modules.sales.view;
+import pe.tecnostock.modules.sales.command.CartCommandHistory;
+import pe.tecnostock.modules.sales.command.CartCommandAction;
 
 import pe.tecnostock.modules.sales.facade.SalesFacade;
 
@@ -64,6 +66,8 @@ public class SalesPanel extends JPanel {
     private final JTable tablaCarrito = new JTable(modeloCarrito);
     private final JTable tablaHistorial = new JTable(modeloHistorial);
     private final List<CartLine> cart = new ArrayList<>();
+    private final CartCommandHistory cartHistory = new CartCommandHistory();
+    private final JButton btnUndo = Styles.actionButton("Deshacer");
     private List<Sale> loadedSales = List.of();
 
     private final JButton btnAgregar = Styles.actionButton("Agregar ítem");
@@ -89,6 +93,7 @@ public class SalesPanel extends JPanel {
         if (!puedeRegistrar) {
             btnAgregar.setEnabled(false);
             btnQuitar.setEnabled(false);
+            btnUndo.setEnabled(false);
             cmbCliente.setEnabled(false);
             cmbItem.setEnabled(false);
             spCantidad.setEnabled(false);
@@ -120,6 +125,9 @@ public class SalesPanel extends JPanel {
 
         btnAgregar.addActionListener(e -> addItem());
         btnQuitar.addActionListener(e -> removeItem());
+        btnUndo.addActionListener(e -> {
+            if (cartHistory.undo()) refreshCart();
+        });
         btnRegistrar.setBackground(new Color(22, 163, 74));
         btnRegistrar.setForeground(Color.WHITE);
         btnRegistrar.setFont(
@@ -200,6 +208,7 @@ public class SalesPanel extends JPanel {
 
         JPanel totales = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 4));
         totales.setOpaque(false);
+        totales.add(btnUndo);
         totales.add(new JLabel("Subtotal:"));
         totales.add(lblSubtotal);
         totales.add(new JLabel("Descuento:"));
@@ -299,12 +308,18 @@ public class SalesPanel extends JPanel {
             CartLine line = cart.get(i);
             if (line.item().getId() == item.getId()
                     && line.item().getType() == item.getType()) {
-                cart.set(i, new CartLine(line.item(), line.quantity() + quantity));
+                final int index = i;
+                cartHistory.execute(new CartCommandAction(
+                        () -> cart.set(index, new CartLine(line.item(), Math.addExact(line.quantity(), quantity))),
+                        () -> cart.set(index, line)));
                 refreshCart();
                 return;
             }
         }
-        cart.add(new CartLine(item, quantity));
+        CartLine added = new CartLine(item, quantity);
+        int index = cart.size();
+        cartHistory.execute(new CartCommandAction(
+                () -> cart.add(added), () -> cart.remove(index)));
         refreshCart();
     }
 
@@ -314,7 +329,10 @@ public class SalesPanel extends JPanel {
             showError("Selecciona una línea del carrito para quitarla.");
             return;
         }
-        cart.remove(row);
+        int index = tablaCarrito.convertRowIndexToModel(row);
+        CartLine removed = cart.get(index);
+        cartHistory.execute(new CartCommandAction(
+                () -> cart.remove(index), () -> cart.add(index, removed)));
         refreshCart();
     }
 
@@ -385,12 +403,19 @@ public class SalesPanel extends JPanel {
         List<SaleService.RequestedLine> request = cart.stream()
                 .map(l -> new SaleService.RequestedLine(l.item(), l.quantity())).toList();
         btnRegistrar.setEnabled(false);
+        btnAgregar.setEnabled(false);
+        btnQuitar.setEnabled(false);
+        btnUndo.setEnabled(false);
         new SwingWorker<Sale, Void>() {
             @Override protected Sale doInBackground() throws Exception {
                 return facade.registerSale(currentUser, opcion.customer().getId(),
                         request, discount);
             }
             @Override protected void done() {
+                boolean canEdit = PermissionPolicy.has(currentUser.getRole(), Permission.REGISTER_SALES);
+                btnAgregar.setEnabled(canEdit);
+                btnQuitar.setEnabled(canEdit);
+                btnUndo.setEnabled(canEdit);
                 btnRegistrar.setEnabled(PermissionPolicy.has(
                         currentUser.getRole(), Permission.REGISTER_SALES));
                 try {
@@ -404,6 +429,7 @@ public class SalesPanel extends JPanel {
                             SwingUtilities.getWindowAncestor(SalesPanel.this),
                             sale).setVisible(true);
                     cart.clear();
+                    cartHistory.clear();
                     txtDescuento.setText("0.00");
                     refreshCart();
                     loadCatalog();
