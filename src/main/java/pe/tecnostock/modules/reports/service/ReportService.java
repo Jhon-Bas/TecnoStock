@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 /** Orquesta validaciones, autorización y consulta del reporte. */
-public final class ReportService {
+public final class ReportService implements ReportAccess {
     private final ReportQuery repository;
     private final AuthorizationService authorization;
 
@@ -22,6 +22,7 @@ public final class ReportService {
     }
 
     /** Valida el intervalo, comprueba los permisos y consulta las ventas. */
+    @Override
     public SalesReport generateSales(User currentUser, LocalDate fromDate, LocalDate toDate)
             throws SQLException {
         Objects.requireNonNull(fromDate, "La fecha inicial es obligatoria.");

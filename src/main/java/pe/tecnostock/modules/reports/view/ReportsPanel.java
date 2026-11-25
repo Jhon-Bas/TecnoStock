@@ -5,6 +5,8 @@ import pe.tecnostock.modules.reports.export.ReportExporter;
 import pe.tecnostock.modules.reports.model.SalesReport;
 import pe.tecnostock.modules.reports.repository.ReportRepository;
 import pe.tecnostock.modules.reports.service.ReportService;
+import pe.tecnostock.modules.reports.service.ReportAccess;
+import pe.tecnostock.modules.reports.proxy.ReportAccessProxy;
 import pe.tecnostock.service.AuthorizationService;
 
 import javax.swing.*;
@@ -19,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 /** Interfaz de consulta y exportación; delega reglas y persistencia a sus capas. */
 public final class ReportsPanel extends JPanel {
     private final User currentUser;
-    private final ReportService service = new ReportService(new ReportRepository(), new AuthorizationService());
+    private final ReportAccess service = new ReportAccessProxy(new ReportService(new ReportRepository(), new AuthorizationService()), new AuthorizationService());
     private final ReportExporter exporter = new ReportExporter();
     private final JTextField fromDate = new JTextField(LocalDate.now().withDayOfMonth(1).toString(), 10);
     private final JTextField toDate = new JTextField(LocalDate.now().toString(), 10);
