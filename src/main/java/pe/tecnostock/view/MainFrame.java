@@ -1,6 +1,8 @@
 
 package pe.tecnostock.view;
 
+import pe.tecnostock.modules.products.view.ProductsPanel;
+
 import pe.tecnostock.modules.customers.view.CustomersPanel;
 
 import pe.tecnostock.modules.admin.view.EmployeesPanel;
@@ -171,9 +173,7 @@ public class MainFrame extends JFrame {
             addSidebarButton(
                     menu,
                     "Consultar productos",
-                    () -> showPendingModule(
-                            "Consultar productos"
-                    )
+                    () -> showProductsPanel()
             );
 
             addSidebarButton(
@@ -188,7 +188,7 @@ public class MainFrame extends JFrame {
             addSidebarButton(
                     menu,
                     "Productos",
-                    () -> showPendingModule("Productos")
+                    () -> showProductsPanel()
             );
 
             addSidebarButton(
@@ -807,6 +807,32 @@ private void showAuditPanel() {
 
         contentPanel.add(
                 new CustomersPanel(currentUser),
+                BorderLayout.CENTER
+        );
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    /**
+     * Presenta el catálogo de productos y servicios.
+     * Las operaciones disponibles dependen de los permisos
+     * del usuario autenticado.
+     */
+    private void showProductsPanel() {
+
+        contentPanel.removeAll();
+
+        contentPanel.add(
+                createHeader(
+                        "Productos y servicios",
+                        "Consulta y gestión del catálogo comercial"
+                ),
+                BorderLayout.NORTH
+        );
+
+        contentPanel.add(
+                new ProductsPanel(currentUser),
                 BorderLayout.CENTER
         );
 
