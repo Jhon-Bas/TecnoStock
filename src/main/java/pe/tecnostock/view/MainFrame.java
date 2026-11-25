@@ -41,22 +41,22 @@ import java.util.concurrent.ExecutionException;
 public class MainFrame extends JFrame {
 
     private static final Color NAVY =
-            new Color(20, 36, 58);
+            new Color(15, 23, 42);
 
     private static final Color NAVY_LIGHT =
-            new Color(41, 73, 103);
+            new Color(30, 41, 59);
 
     private static final Color ACCENT =
-            new Color(38, 119, 191);
+            new Color(37, 99, 235);
 
     private static final Color BACKGROUND =
-            new Color(245, 248, 252);
+            new Color(241, 245, 249);
 
     private static final Color TEXT =
             new Color(35, 49, 67);
 
     private static final Color MUTED =
-            new Color(112, 126, 143);
+            new Color(71, 85, 105);
 
     private final User currentUser;
 
@@ -120,7 +120,7 @@ public class MainFrame extends JFrame {
 
         contentPanel.setBackground(BACKGROUND);
         contentPanel.setBorder(
-                new EmptyBorder(28, 30, 28, 30)
+                new EmptyBorder(22, 24, 22, 24)
         );
 
         root.add(contentPanel, BorderLayout.CENTER);
@@ -137,12 +137,12 @@ public class MainFrame extends JFrame {
 
         JPanel sidebar = new JPanel(new BorderLayout());
         sidebar.setBackground(NAVY);
-        sidebar.setPreferredSize(new Dimension(240, 0));
+        sidebar.setPreferredSize(new Dimension(250, 0));
 
         JLabel brand = new JLabel("  TECNOSTOCK");
         brand.setForeground(Color.WHITE);
         brand.setFont(
-                new Font("SansSerif", Font.BOLD, 22)
+                new Font("Segoe UI", Font.BOLD, 22)
         );
         brand.setBorder(
                 new EmptyBorder(30, 15, 28, 15)
@@ -228,7 +228,15 @@ public class MainFrame extends JFrame {
             );
         }
 
-        sidebar.add(menu, BorderLayout.CENTER);
+        JScrollPane menuScroll = new JScrollPane(menu);
+        menuScroll.setBorder(BorderFactory.createEmptyBorder());
+        menuScroll.setOpaque(false);
+        menuScroll.getViewport().setBackground(NAVY);
+        menuScroll.setHorizontalScrollBarPolicy(
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        menuScroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        sidebar.add(menuScroll, BorderLayout.CENTER);
 
         JPanel footer = new JPanel();
         footer.setLayout(
@@ -309,11 +317,13 @@ public class MainFrame extends JFrame {
         );
 
         button.setFont(
-                new Font("SansSerif", Font.PLAIN, 14)
+                new Font("Segoe UI", Font.PLAIN, 14)
         );
 
         button.setForeground(Color.WHITE);
         button.setBackground(NAVY_LIGHT);
+        button.setBorderPainted(false);
+        button.setMargin(new Insets(10, 16, 10, 12));
         button.setFocusPainted(false);
         button.setCursor(
                 Cursor.getPredefinedCursor(
@@ -392,14 +402,14 @@ public class MainFrame extends JFrame {
 
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(
-                new Font("SansSerif", Font.BOLD, 28)
+                new Font("Segoe UI", Font.BOLD, 32)
         );
         titleLabel.setForeground(TEXT);
 
         JLabel subtitleLabel = new JLabel(subtitle);
         subtitleLabel.setForeground(MUTED);
         subtitleLabel.setFont(
-                new Font("SansSerif", Font.PLAIN, 14)
+                new Font("Segoe UI", Font.PLAIN, 14)
         );
 
         header.add(titleLabel);
@@ -466,9 +476,7 @@ public class MainFrame extends JFrame {
         actions.setBackground(Color.WHITE);
         actions.setBorder(
                 BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                new Color(223, 230, 239)
-                        ),
+                        BorderFactory.createMatteBorder(3, 1, 1, 1, ACCENT),
                         new EmptyBorder(20, 20, 20, 20)
                 )
         );
@@ -477,7 +485,7 @@ public class MainFrame extends JFrame {
                 "Accesos rápidos"
         );
         actionsTitle.setFont(
-                new Font("SansSerif", Font.BOLD, 18)
+                new Font("Segoe UI", Font.BOLD, 18)
         );
         actionsTitle.setForeground(TEXT);
 
@@ -535,9 +543,7 @@ public class MainFrame extends JFrame {
 
         card.setBorder(
                 BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                new Color(223, 230, 239)
-                        ),
+                        BorderFactory.createMatteBorder(3, 1, 1, 1, ACCENT),
                         new EmptyBorder(22, 24, 22, 24)
                 )
         );
@@ -545,7 +551,7 @@ public class MainFrame extends JFrame {
         JLabel titleLabel = new JLabel(title);
         titleLabel.setForeground(MUTED);
         titleLabel.setFont(
-                new Font("SansSerif", Font.PLAIN, 14)
+                new Font("Segoe UI", Font.PLAIN, 14)
         );
 
         card.add(titleLabel, BorderLayout.NORTH);
@@ -562,7 +568,7 @@ public class MainFrame extends JFrame {
         JLabel label = new JLabel("—");
 
         label.setFont(
-                new Font("SansSerif", Font.BOLD, 36)
+                new Font("Segoe UI", Font.BOLD, 44)
         );
 
         label.setForeground(ACCENT);
@@ -576,13 +582,17 @@ public class MainFrame extends JFrame {
     private JButton createActionButton(String text) {
 
         JButton button = new JButton(text);
+        button.setBackground(ACCENT);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
 
         button.setFont(
-                new Font("SansSerif", Font.BOLD, 14)
+                new Font("Segoe UI", Font.BOLD, 14)
         );
 
         button.setPreferredSize(
-                new Dimension(0, 43)
+                new Dimension(220, 43)
         );
 
         button.setCursor(
