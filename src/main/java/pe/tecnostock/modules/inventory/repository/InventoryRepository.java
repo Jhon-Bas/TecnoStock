@@ -16,8 +16,8 @@ import java.util.OptionalInt;
 /**
  * Acceso a las existencias y al historial de movimientos en SQLite.
  *
- * Las operaciones que cambian datos reciben la Connection: asÃ­ el
- * llamador puede ejecutarlas dentro de su propia transacciÃ³n, por
+ * Las operaciones que cambian datos reciben la Connection: así el
+ * llamador puede ejecutarlas dentro de su propia transacción, por
  * ejemplo la que registra una venta. Solo contiene SQL; las reglas de
  * stock las aplica InventarioService.
  */
@@ -26,7 +26,7 @@ public class InventoryRepository {
     /**
      * Stock de un producto activo.
      *
-     * @return vacÃ­o si el producto no existe o estÃ¡ inactivo
+     * @return vacío si el producto no existe o está inactivo
      */
     public OptionalInt readActiveStock(Connection connection, int productId)
             throws SQLException {
@@ -49,10 +49,10 @@ public class InventoryRepository {
     }
 
     /**
-     * Cambia el stock solo si todavÃ­a vale lo que se leyÃ³, para no
-     * pisar un cambio hecho por otra operaciÃ³n en el medio.
+     * Cambia el stock solo si todavía vale lo que se leyó, para no
+     * pisar un cambio hecho por otra operación en el medio.
      *
-     * @return false si el stock ya habÃ­a cambiado
+     * @return false si el stock ya había cambiado
      */
     public boolean updateStock(
             Connection connection,
@@ -77,7 +77,7 @@ public class InventoryRepository {
         }
     }
 
-    /** Registra el movimiento dentro de la transacciÃ³n recibida. */
+    /** Registra el movimiento dentro de la transacción recibida. */
     public void insertMovement(
             Connection connection,
             int productId,
@@ -111,7 +111,7 @@ public class InventoryRepository {
     }
 
     /**
-     * Ãšltimos movimientos, del mÃ¡s reciente al mÃ¡s antiguo.
+     * Últimos movimientos, del más reciente al más antiguo.
      *
      * @param productoId 0 para todos los productos
      */

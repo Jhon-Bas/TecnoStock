@@ -57,7 +57,7 @@ public class InventoryPanel extends JPanel {
     private final JButton refreshButton = new JButton("Actualizar");
     private final DefaultTableModel movementModel;
 
-    /** Construye el panel con los servicios del mÃ³dulo. */
+    /** Construye el panel con los servicios del módulo. */
     public InventoryPanel(User currentUser) {
         this(new InventoryService(new InventoryRepository(),
                 new ProductRepository(), new AuthorizationService()), currentUser);
@@ -71,12 +71,12 @@ public class InventoryPanel extends JPanel {
         );
         this.currentUser = Objects.requireNonNull(
                 currentUser,
-                "El usuario de sesiÃ³n es obligatorio."
+                "El usuario de sesión es obligatorio."
         );
 
         this.movementModel = new DefaultTableModel(
                 new String[]{
-                        "ID", "CÃ³digo de producto", "Tipo", "Cantidad",
+                        "ID", "Código de producto", "Tipo", "Cantidad",
                         "Stock Resultante", "Motivo", "Fecha", "Usuario"
                 },
                 0
@@ -165,7 +165,7 @@ public class InventoryPanel extends JPanel {
         add(tablePanel, BorderLayout.CENTER);
     }
 
-    /** Configura los controles segÃºn el rol. */
+    /** Configura los controles según el rol. */
     private void configurePermissions() {
         boolean canManage = currentUser.isActive()
                 && PermissionPolicy.has(currentUser.getRole(), Permission.MANAGE_INVENTORY);
@@ -260,7 +260,7 @@ public class InventoryPanel extends JPanel {
     private void showError(String message) {
         JOptionPane.showMessageDialog(
                 this,
-                (message == null || message.isBlank()) ? "No se pudo completar la operaciÃ³n." : message,
+                (message == null || message.isBlank()) ? "No se pudo completar la operación." : message,
                 "Aviso",
                 JOptionPane.WARNING_MESSAGE
         );

@@ -3,10 +3,10 @@ package pe.tecnostock.model;
 import java.time.LocalDateTime;
 
 /**
- * Constancia de un cambio de stock, tal como quedÃ³ registrada.
+ * Constancia de un cambio de stock, tal como quedó registrada.
  *
- * Responde por quÃ© cambiÃ³ el stock: quÃ© tipo de movimiento fue,
- * cuÃ¡ntas unidades, cÃ³mo estaba antes, cÃ³mo quedÃ³, quiÃ©n lo hizo y
+ * Responde por qué cambió el stock: qué tipo de movimiento fue,
+ * cuántas unidades, cómo estaba antes, cómo quedó, quién lo hizo y
  * el motivo. Se lee del historial y no se modifica.
  */
 public record InventoryMovement(

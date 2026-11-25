@@ -17,14 +17,14 @@ import java.util.List;
 /**
  * Reglas de negocio del inventario.
  *
- * Todo cambio de stock pasa por aquÃ­ y ocurre en una transacciÃ³n: se
+ * Todo cambio de stock pasa por aquí y ocurre en una transacción: se
  * lee el stock, se calcula el nuevo con las reglas de TipoMovimiento,
  * se actualiza el producto y se registra el movimiento. Si algo falla,
  * no queda ni el cambio de stock ni el registro.
  */
 public class InventoryService {
 
-    /** MÃ¡ximo de filas que devuelve cada consulta. */
+    /** Máximo de filas que devuelve cada consulta. */
     private static final int LIMIT = 200;
 
     private static final int MAX_REASON_LENGTH = 150;
@@ -58,7 +58,7 @@ public class InventoryService {
                 false, lowStockOnly, LIMIT);
     }
 
-    /** Ãšltimos movimientos; productoId 0 trae todos los productos. */
+    /** Últimos movimientos; productoId 0 trae todos los productos. */
     public List<InventoryMovement> listMovements(
             User currentUser,
             int productId
@@ -93,13 +93,13 @@ public class InventoryService {
     }
 
     /**
-     * Aplica un movimiento dentro de la transacciÃ³n del llamador.
+     * Aplica un movimiento dentro de la transacción del llamador.
      *
-     * Es la pieza que usarÃ¡ el proceso de venta para descontar stock
-     * en la misma transacciÃ³n que registra la venta. No comprueba
-     * permisos: quien la llama ya debe haber autorizado la operaciÃ³n.
+     * Es la pieza que usará el proceso de venta para descontar stock
+     * en la misma transacción que registra la venta. No comprueba
+     * permisos: quien la llama ya debe haber autorizado la operación.
      *
-     * @throws IllegalArgumentException si el movimiento no es vÃ¡lido
+     * @throws IllegalArgumentException si el movimiento no es válido
      */
     public void applyMovement(
             Connection connection,
@@ -115,7 +115,7 @@ public class InventoryService {
         int previousStock = repository
                 .readActiveStock(connection, productId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "El producto no existe o estÃ¡ inactivo."));
+                        "El producto no existe o está inactivo."));
 
         int newStock = type.calculateStock(previousStock, quantity);
 
@@ -123,7 +123,7 @@ public class InventoryService {
                 connection, productId, previousStock, newStock)) {
 
             throw new IllegalArgumentException(
-                    "El stock cambiÃ³ mientras se registraba. "
+                    "El stock cambió mientras se registraba. "
                     + "Intenta de nuevo."
             );
         }
@@ -141,7 +141,7 @@ public class InventoryService {
 
         if (value.isEmpty() || value.length() > MAX_REASON_LENGTH) {
             throw new IllegalArgumentException(
-                    "El motivo es obligatorio (mÃ¡ximo "
+                    "El motivo es obligatorio (máximo "
                     + MAX_REASON_LENGTH + " caracteres)."
             );
         }

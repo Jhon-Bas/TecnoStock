@@ -4,13 +4,13 @@ package pe.tecnostock.model;
  * Clases de movimiento de inventario.
  *
  * Cada tipo sabe calcular el stock que resulta de aplicarlo y rechaza
- * lo que no es vÃ¡lido: cantidades que no son positivas, salidas que
- * superan lo disponible y existencias negativas. Es lÃ³gica pura, sin
+ * lo que no es válido: cantidades que no son positivas, salidas que
+ * superan lo disponible y existencias negativas. Es lógica pura, sin
  * base de datos.
  */
 public enum MovementType {
 
-    /** Ingreso de mercaderÃ­a: suma la cantidad al stock. */
+    /** Ingreso de mercadería: suma la cantidad al stock. */
     ENTRY("Entrada", "ENTRADA") {
         @Override
         public int calculateStock(int currentStock, int quantity) {
@@ -19,7 +19,7 @@ public enum MovementType {
         }
     },
 
-    /** Salida de mercaderÃ­a: resta la cantidad, sin dejar stock negativo. */
+    /** Salida de mercadería: resta la cantidad, sin dejar stock negativo. */
     EXIT("Salida", "SALIDA") {
         @Override
         public int calculateStock(int currentStock, int quantity) {
@@ -37,7 +37,7 @@ public enum MovementType {
     },
 
     /**
-     * CorrecciÃ³n tras contar fÃ­sicamente: la cantidad es el stock
+     * Corrección tras contar físicamente: la cantidad es el stock
      * real contado, que reemplaza al registrado.
      */
     ADJUSTMENT("Ajuste", "AJUSTE") {
@@ -79,7 +79,7 @@ public enum MovementType {
      * Stock que resulta de aplicar este movimiento.
      *
      * @param cantidad unidades; en un AJUSTE, el stock contado
-     * @throws IllegalArgumentException si el movimiento no es vÃ¡lido
+     * @throws IllegalArgumentException si el movimiento no es válido
      */
     public abstract int calculateStock(int currentStock, int quantity);
 

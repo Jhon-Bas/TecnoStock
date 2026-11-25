@@ -65,7 +65,7 @@ public class InventoryServiceTest {
         Category laptops = catalog.listCategories(users.manager)
                 .get(0);
 
-        // Stock mÃ­nimo 2; el stock inicial siempre es 0.
+        // Stock mínimo 2; el stock inicial siempre es 0.
         catalog.register(users.manager, ItemType.PRODUCT,
                 new ItemData(0, "LAP-001", "Laptop Lenovo", null,
                         new BigDecimal("2500"), new BigDecimal("2000"),
@@ -116,7 +116,7 @@ public class InventoryServiceTest {
         inventory.register(users.manager, productId,
                 MovementType.ENTRY, 10, "Compra");
         inventory.register(users.manager, productId,
-                MovementType.EXIT, 4, "Merma por daÃ±o");
+                MovementType.EXIT, 4, "Merma por daño");
 
         assertEquals(6, stock());
         assertEquals(2, movements().size());
@@ -144,7 +144,7 @@ public class InventoryServiceTest {
         inventory.register(users.manager, productId,
                 MovementType.ENTRY, 10, "Compra");
         inventory.register(users.manager, productId,
-                MovementType.ADJUSTMENT, 7, "Conteo fÃ­sico");
+                MovementType.ADJUSTMENT, 7, "Conteo físico");
 
         assertEquals(7, stock());
 
@@ -197,7 +197,7 @@ public class InventoryServiceTest {
     @Test
     void shouldIdentifyLowStock() throws SQLException {
 
-        // Stock 0 con mÃ­nimo 2: estÃ¡ bajo.
+        // Stock 0 con mínimo 2: está bajo.
         assertEquals(1, inventory.searchProducts(
                 users.manager, "", true).size());
 
@@ -213,7 +213,7 @@ public class InventoryServiceTest {
             throws SQLException {
 
         // El usuario 9999 no existe: el INSERT del movimiento falla
-        // despuÃ©s de haberse actualizado el stock.
+        // después de haberse actualizado el stock.
         assertThrows(SQLException.class,
                 () -> Transaction.executeWithoutResult(connection ->
                         inventory.applyMovement(connection, 9999,
