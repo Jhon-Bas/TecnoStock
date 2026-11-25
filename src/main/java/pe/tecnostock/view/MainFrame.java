@@ -1,6 +1,8 @@
 
 package pe.tecnostock.view;
 
+import pe.tecnostock.modules.customers.view.CustomersPanel;
+
 import pe.tecnostock.modules.admin.view.EmployeesPanel;
 import pe.tecnostock.modules.admin.view.PasswordResetPanel;
 
@@ -156,7 +158,7 @@ public class MainFrame extends JFrame {
         // Los módulos comerciales serán compartidos
         // entre los roles según sus permisos.
         addSidebarButton(menu, "Clientes",
-                () -> showPendingModule("Clientes"));
+                () -> showCustomersPanel());
 
         addSidebarButton(menu, "Ventas",
                 () -> showPendingModule("Ventas"));
@@ -787,6 +789,31 @@ private void showAuditPanel() {
         contentPanel.revalidate();
         contentPanel.repaint();
     }
+    /**
+     * Presenta la gestión de clientes dentro de la ventana principal.
+     * Conserva el menú lateral y la sesión del usuario autenticado.
+     */
+    private void showCustomersPanel() {
+
+        contentPanel.removeAll();
+
+        contentPanel.add(
+                createHeader(
+                        "Gestión de clientes",
+                        "Registro, búsqueda y administración de clientes"
+                ),
+                BorderLayout.NORTH
+        );
+
+        contentPanel.add(
+                new CustomersPanel(currentUser),
+                BorderLayout.CENTER
+        );
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
     private void showPendingModule(String module) {
 
         contentPanel.removeAll();
