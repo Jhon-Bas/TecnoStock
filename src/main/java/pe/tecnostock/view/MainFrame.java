@@ -373,11 +373,9 @@ public class MainFrame extends JFrame {
             loadDashboardStatistics();
 
         } else {
-            // Los paneles del gerente y empleado
-            // recibirán indicadores propios
-            // al desarrollar sus módulos.
+
             contentPanel.add(
-                    createWelcomePanel(),
+                    createCommercialDashboard(),
                     BorderLayout.CENTER
             );
         }
@@ -696,32 +694,116 @@ public class MainFrame extends JFrame {
         );
     }
 
-    /**
-     * Presenta una bienvenida temporal para los roles
-     * cuyos dashboards se desarrollarán después.
-     */
-    private JPanel createWelcomePanel() {
+    /** Presenta los indicadores comerciales según el rol autenticado. */
+    private JPanel createCommercialDashboard() {
+        boolean manager = currentUser.getRole() == Role.GERENTE;
+        JPanel dashboard = new JPanel(new BorderLayout(16, 16));
+        dashboard.setOpaque(false);
+        JPanel cards = new JPanel(new GridLayout(2, 2, 16, 16));
+        cards.setOpaque(false);
+        JLabel count = createValueLabel();
+        JLabel total = createValueLabel();
+        JLabel discounts = createValueLabel();
+        JLabel subtotal = createValueLabel();
+        cards.add(createStatCard(manager ? "Ventas de hoy" : "Mis ventas recientes", count));
+        cards.add(createStatCard(manager ? "Ingresos de hoy" : "Importe de ventas recientes", total));
+        cards.add(createStatCard("Descuentos", discounts));
+        cards.add(createStatCard("Subtotal", subtotal));
+        dashboard.add(cards, BorderLayout.CENTER);
 
-        JPanel panel = new JPanel(
-                new BorderLayout()
-        );
+        JPanel actions = new JPanel(new GridLayout(0, 2, 10, 10));
+        actions.setOpaque(false);
+        addDashboardAction(actions, "Nueva venta", this::showSalesPanel);
+        addDashboardAction(actions, "Clientes", this::showCustomersPanel);
+        addDashboardAction(actions, "Boletas", this::showReceiptsPanel);
+        if (manager) {
+            addDashboardAction(actions, "Inventario", this::showInventoryPanel);
+            addDashboardAction(actions, "Reportes", this::showReportsPanel);
+        } else {
+            addDashboardAction(actions, "Consultar productos", this::showProductsPanel);
+        }
+        JButton refresh = createActionButton("Actualizar indicadores");
+        JLabel status = new JLabel(manager ? "Ventas emitidas en la fecha actual" : "Hasta 200 operaciones recientes propias; solo ventas emitidas");
+        status.setForeground(MUTED);
+        refresh.addActionListener(event -> openProtectedModule(() ->
+                loadCommercialStatistics(manager, count, total, discounts, subtotal, status, refresh)));
+        actions.add(refresh);
+        JPanel bottom = new JPanel(new BorderLayout(0, 12));
+        bottom.setOpaque(false);
+        bottom.add(status, BorderLayout.NORTH);
+        bottom.add(actions, BorderLayout.CENTER);
+        dashboard.add(bottom, BorderLayout.SOUTH);
+        loadCommercialStatistics(manager, count, total, discounts, subtotal, status, refresh);
+        return dashboard;
+    }
 
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(
-                new EmptyBorder(35, 35, 35, 35)
-        );
+    /** Conecta un acceso rápido con la navegación protegida de la ventana. */
+    private void addDashboardAction(JPanel panel, String text, Runnable action) {
+        JButton button = createActionButton(text);
+        button.addActionListener(event -> openProtectedModule(action));
+        panel.add(button);
+    }
 
-        JLabel message = new JLabel(
-                "<html><h2>Bienvenido a TecnoStock</h2>"
-                + "<p>Tu espacio de trabajo está listo.</p>"
-                + "<p>Utiliza el menú lateral para navegar.</p>"
-                + "</html>"
-        );
+    /** Agrupa los importes comerciales sin perder precisión monetaria. */
+    private record CommercialStats(long count, java.math.BigDecimal total,
+            java.math.BigDecimal discounts, java.math.BigDecimal subtotal) {}
 
-        message.setForeground(TEXT);
-        panel.add(message, BorderLayout.NORTH);
+    /** Consulta indicadores mediante los servicios autorizados, sin bloquear Swing. */
+    private void loadCommercialStatistics(boolean manager, JLabel count, JLabel total,
+            JLabel discounts, JLabel subtotal, JLabel status, JButton refresh) {
+        refresh.setEnabled(false);
+        for (JLabel label : new JLabel[]{count, total, discounts, subtotal}) label.setText("...");
+        new SwingWorker<CommercialStats, Void>() {
+            @Override
+            protected CommercialStats doInBackground() throws SQLException {
+                if (manager) {
+                    var access = new pe.tecnostock.modules.reports.proxy.ReportAccessProxy(
+                            new pe.tecnostock.modules.reports.service.ReportService(
+                                    new pe.tecnostock.modules.reports.repository.ReportRepository(),
+                                    new pe.tecnostock.service.AuthorizationService()),
+                            new pe.tecnostock.service.AuthorizationService());
+                    var today = java.time.LocalDate.now();
+                    var report = access.generateSales(currentUser, today, today);
+                    return new CommercialStats(report.saleCount(), report.total(), report.discounts(), report.subtotal());
+                }
+                var sales = new pe.tecnostock.modules.sales.facade.SalesFacade().listSales(currentUser);
+                long quantity = 0;
+                var amount = java.math.BigDecimal.ZERO;
+                var discount = java.math.BigDecimal.ZERO;
+                var base = java.math.BigDecimal.ZERO;
+                for (var sale : sales) {
+                    if (sale.getUserId() != currentUser.getId() || !"EMITIDA".equals(sale.getStatus())) continue;
+                    quantity++;
+                    amount = amount.add(sale.getTotal());
+                    discount = discount.add(sale.getDiscount());
+                    base = base.add(sale.getSubtotal());
+                }
+                return new CommercialStats(quantity, amount, discount, base);
+            }
+            @Override
+            protected void done() {
+                try {
+                    var stats = get();
+                    count.setText(Long.toString(stats.count()));
+                    total.setText(formatDashboardMoney(stats.total()));
+                    discounts.setText(formatDashboardMoney(stats.discounts()));
+                    subtotal.setText(formatDashboardMoney(stats.subtotal()));
+                    status.setText(manager ? "Ventas emitidas en la fecha actual" : "Hasta 200 operaciones recientes propias; solo ventas emitidas");
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    status.setText("Consulta interrumpida. Actualiza los indicadores.");
+                } catch (ExecutionException ex) {
+                    status.setText("No se pudieron cargar los indicadores. Actualiza o revisa la sesión.");
+                } finally {
+                    refresh.setEnabled(true);
+                }
+            }
+        }.execute();
+    }
 
-        return panel;
+    /** Formatea importes en soles para las tarjetas comerciales. */
+    private String formatDashboardMoney(java.math.BigDecimal amount) {
+        return "S/ " + amount.setScale(2, java.math.RoundingMode.HALF_UP).toPlainString();
     }
 
     /**
