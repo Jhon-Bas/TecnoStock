@@ -1,314 +1,127 @@
 # TecnoStock
 
-**Sistema de Gestión de Ventas e Inventario**
+**Sistema de gestión de ventas e inventario** — Proyecto integrador de Diseño de Patrones, 2026-2.
 
-Proyecto Integrador del curso de **Diseño de Patrones**, desarrollado en Java mediante programación orientada a objetos, arquitectura por capas, principios SOLID y patrones de diseño.
+TecnoStock es una aplicación de escritorio para un negocio de comercialización de tecnología. Integra administración de usuarios, atención al cliente, catálogo de productos y servicios, inventario, ventas y reportes en una interfaz gráfica con persistencia SQLite y control de acceso por roles.
 
-## 1. Descripción del proyecto
+## Objetivo
 
-TecnoStock es una aplicación de escritorio orientada a la gestión de ventas, productos, clientes e inventario.
+Facilitar las operaciones comerciales mediante una aplicación organizada, mantenible y extensible, aplicando programación orientada a objetos, principios SOLID y patrones de diseño.
 
-El sistema busca facilitar las operaciones de un negocio mediante una interfaz gráfica, almacenamiento persistente de información, control de acceso por roles y organización modular del código.
+## Tecnologías
 
-Actualmente se encuentra en desarrollo. La primera etapa funcional corresponde al **módulo de autenticación, seguridad y administración de usuarios**.
+| Tecnología | Uso |
+|---|---|
+| Java 21 | Lenguaje y plataforma |
+| Swing y FlatLaf 3.6 | Interfaz gráfica |
+| SQLite JDBC 3.49.1.0 | Persistencia local |
+| OpenPDF 2.0.3 | Exportación de documentos PDF |
+| Maven | Dependencias, compilación y pruebas |
+| JUnit 5.11.4 | Pruebas automatizadas |
+| Git y GitHub | Control de versiones |
+| PlantUML | Documentación de diseño |
 
-## 2. Objetivo
+## Instalación y ejecución
 
-Desarrollar una aplicación de escritorio que permita administrar clientes, productos, servicios, ventas e inventario, aplicando principios de programación orientada a objetos, SOLID y patrones de diseño para conseguir una arquitectura organizada, mantenible, segura y extensible.
+Requisitos: JDK 21, Maven, entorno gráfico compatible con Swing y permisos de escritura en el directorio del proyecto. La primera resolución de dependencias requiere conexión a Internet.
 
-### Objetivos específicos
-
-- Implementar autenticación y autorización mediante roles.
-- Gestionar usuarios y empleados desde un módulo administrativo.
-- Administrar clientes, productos y servicios.
-- Controlar existencias y movimientos de inventario.
-- Registrar ventas y calcular importes.
-- Generar comprobantes y reportes.
-- Persistir la información en una base de datos SQLite.
-- Aplicar patrones de diseño de manera funcional y justificable.
-- Verificar las principales reglas del sistema mediante pruebas automatizadas.
-
-## 3. Tecnologías utilizadas
-
-| Tecnología | Aplicación | Estado |
-|---|---|---|
-| Java 21 | Lenguaje de programación | Implementado |
-| Visual Studio Code | Entorno de desarrollo | En uso |
-| Apache Maven | Dependencias, compilación y pruebas | Implementado |
-| Java Swing | Interfaz gráfica de escritorio | Implementado |
-| FlatLaf | Apariencia visual de los formularios | Implementado |
-| SQLite | Persistencia de datos | Implementado |
-| JUnit 5 | Pruebas automatizadas | Implementado |
-| Git y GitHub | Control de versiones y colaboración | En uso |
-| PlantUML | Diagramas UML de documentación | Previsto |
-
-## 4. Arquitectura del sistema
-
-TecnoStock utiliza una arquitectura modular por capas, con separación entre interfaz gráfica, lógica de negocio, persistencia y configuración.
-
-Su organización sigue principios de MVC, aunque actualmente algunas clases Swing también coordinan eventos de interfaz. Por ello, no se considera todavía una implementación de MVC puro.
-
-### Capas principales
-
-- **model:** entidades y enumeraciones del dominio.
-- **view:** ventanas principales, inicio de sesión y formularios compartidos.
-- **modules:** funcionalidades agrupadas por módulo.
-- **service:** reglas de negocio, autenticación, autorización y sesiones.
-- **repository:** consultas y operaciones de persistencia.
-- **config:** conexión e inicialización de SQLite.
-- **util:** funciones auxiliares y operaciones criptográficas.
-
-### Estructura actual simplificada
-
-```text
-TecnoStock/
-├── data/
-│   └── tecnostock.db
-├── src/
-│   ├── main/
-│   │   └── java/
-│   │       └── pe/
-│   │           └── tecnostock/
-│   │               ├── App.java
-│   │               ├── config/
-│   │               ├── model/
-│   │               ├── modules/
-│   │               │   └── admin/
-│   │               │       ├── repository/
-│   │               │       ├── service/
-│   │               │       └── view/
-│   │               ├── repository/
-│   │               ├── service/
-│   │               ├── util/
-│   │               └── view/
-│   └── test/
-│       └── java/
-│           └── pe/
-│               └── tecnostock/
-│                   └── security/
-├── pom.xml
-└── README.md
+```bash
+git clone https://github.com/Jhon-Bas/TecnoStock.git
+cd TecnoStock
+mvn clean verify
+mvn exec:java
 ```
 
-La base de datos local se excluye del repositorio mediante `.gitignore`.
+En el primer inicio, si no existen usuarios, el sistema presenta el formulario de configuración de la cuenta inicial. En los siguientes accesos presenta el formulario de inicio de sesión. Las migraciones preparan el esquema de SQLite al iniciar.
 
-## 5. Roles de usuario
+La base local `data/tecnostock.db` no se distribuye mediante Git. No eliminarla para actualizar el programa; conservar una copia de seguridad de los datos antes de cambios de versión.
 
-El sistema contempla tres roles principales.
+Para construir el artefacto Maven: `mvn clean package`. Para iniciar con las dependencias gestionadas por Maven, utilizar `mvn exec:java`.
 
-| Rol | Responsabilidades |
+## Módulos
+
+| Módulo | Funcionalidades |
 |---|---|
-| ADMIN | Administración de usuarios, empleados, roles, estados, contraseñas, auditoría y acceso al panel administrativo |
-| GERENTE | Gestión operativa, inventario y reportes, conforme se implementen los módulos |
-| EMPLEADO | Operaciones de ventas y atención, conforme se implemente el punto de venta |
+| Administración | Empleados, cuentas, roles, estados, contraseñas temporales, auditoría e indicadores |
+| Clientes | Registro, búsqueda y mantenimiento según permisos |
+| Productos | Catálogo de productos y servicios, códigos comerciales, precios y estados |
+| Inventario | Entradas, salidas, ajustes, existencias e historial de movimientos |
+| Ventas | Carrito, cantidades, precios, descuentos autorizados, registro transaccional y boletas PDF |
+| Reportes | Consultas comerciales, filtros por fechas y exportación PDF/CSV |
 
-El acceso a las funcionalidades depende del rol autenticado. La autorización también se comprueba en los servicios de negocio, no únicamente mediante la visibilidad de botones.
+La ventana principal incluye indicadores y accesos rápidos diferenciados por rol. Los indicadores del empleado corresponden a operaciones propias recientes, no a totales históricos ilimitados.
 
-## 6. Funcionalidades implementadas
+## Roles y seguridad
 
-### 6.1. Autenticación
+| Operación | ADMIN | GERENTE | EMPLEADO |
+|---|---|---|---|
+| Administración de cuentas y auditoría | Sí | No | No |
+| Consultar y registrar clientes | Sí | Sí | Sí |
+| Gestionar clientes existentes | Sí | Sí | No |
+| Consultar catálogo | Sí | Sí | Sí |
+| Gestionar catálogo e inventario | Sí | Sí | No |
+| Registrar ventas y consultar ventas propias | Sí | Sí | Sí |
+| Consultar todas las ventas y aplicar descuentos | Sí | Sí | No |
+| Consultar reportes | Sí | Sí | No |
 
-- Inicio de sesión mediante usuario y contraseña.
-- Configuración inicial del sistema.
-- Identificación del rol del usuario autenticado.
-- Navegación según el rol.
-- Cierre de sesión.
-- Cambio obligatorio de contraseña temporal.
+Los permisos se definen en `PermissionPolicy` y se verifican en los servicios mediante `AuthorizationService`. El control visual no sustituye la autorización. Las contraseñas se protegen mediante PBKDF2 con salt; las sesiones se verifican y pueden invalidarse ante cambios sensibles en las cuentas. Los identificadores internos se generan en SQLite y su presentación se restringe al administrador; los códigos comerciales se conservan.
 
-### 6.2. Seguridad
+## Arquitectura
 
-- Almacenamiento de contraseñas mediante PBKDF2 con salt.
-- Validación de políticas de contraseña.
-- Verificación de permisos desde los servicios.
-- Validación del estado activo de la cuenta.
-- Control de versiones de sesión.
-- Invalidación de sesiones ante modificaciones sensibles de la cuenta.
+Organización modular por capas, con separación de interfaz gráfica, reglas de negocio y persistencia. No se afirma que sea una implementación de MVC puro.
 
-### 6.3. Administración de empleados y usuarios
+```text
+src/main/java/pe/tecnostock/
+├── App.java
+├── config/             # Conexión, inicialización, migraciones y transacciones
+├── model/              # Entidades y enumeraciones
+├── modules/
+│   ├── admin/
+│   ├── customers/
+│   ├── inventory/
+│   ├── products/
+│   ├── reports/
+│   └── sales/
+├── repository/         # Persistencia compartida
+├── security/           # Permisos
+├── service/            # Autenticación, autorización y sesiones
+├── util/               # Utilidades
+└── view/               # Ventanas principales y estilos
+src/test/java/          # Pruebas JUnit
+```
 
-- Registro de empleados.
-- Consulta y búsqueda.
-- Listado con paginación.
-- Edición de información.
-- Asignación y modificación de roles.
-- Activación y desactivación lógica.
-- Registro de información de creación y modificación.
-- Restricciones de autorización para operaciones administrativas.
+Los módulos agrupan sus servicios, repositorios, vistas y otros componentes específicos. Los servicios coordinan las reglas del negocio; los repositorios encapsulan el acceso SQL. Las ventas y movimientos de inventario aprovechan transacciones para mantener consistencia. Los importes se representan en céntimos en la persistencia.
 
-Los registros se desactivan lógicamente cuando corresponde, evitando eliminaciones físicas innecesarias.
+## Patrones de diseño
 
-### 6.4. Restablecimiento de contraseñas
+| Patrón | Categoría | Participantes principales | Beneficio |
+|---|---|---|---|
+| Factory Method | Creacional | `ItemCreator`, `ProductCreator`, `ServiceItemCreator`, `CommercialItemFactory` | Delega la construcción de los artículos en creadores concretos |
+| Facade | Estructural | `SalesFacade`, servicios de clientes, catálogo y ventas | Simplifica la interacción de las vistas comerciales con los subsistemas |
+| Protection Proxy | Estructural | `ReportAccess`, `ReportAccessProxy`, `ReportService` | Verifica autorización antes de delegar consultas |
+| Command | Comportamiento | `CartCommand`, `CartCommandAction`, `CartCommandHistory` | Encapsula acciones y permite deshacer cambios del carrito antes de registrar la venta |
 
-- Búsqueda de cuentas.
-- Selección de usuarios.
-- Restablecimiento administrativo de contraseñas.
-- Uso de contraseñas temporales.
-- Cambio obligatorio de contraseña en el siguiente acceso.
-- Invalidación de sesiones previas según las reglas de seguridad.
+El diseño aplica encapsulamiento, abstracción, herencia y polimorfismo, además de separación de responsabilidades (SRP). Las interfaces de acceso a reportes y los comandos permiten desacoplar consumidores de implementaciones concretas. Las colecciones dinámicas se utilizan en consultas y en el historial de acciones.
 
-### 6.5. Auditoría
-
-- Registro de eventos administrativos relevantes.
-- Consulta del historial de acciones.
-- Búsqueda de eventos.
-- Paginación de resultados.
-- Asociación de operaciones con usuarios responsables.
-
-### 6.6. Dashboard administrativo
-
-- Interfaz principal con menú lateral.
-- Indicadores obtenidos de la base de datos.
-- Acceso a la gestión de empleados.
-- Acceso al restablecimiento de contraseñas.
-- Acceso al historial de auditoría.
-- Navegación integrada mediante paneles Swing, sin abrir ventanas administrativas independientes.
-
-## 7. Persistencia de datos
-
-TecnoStock utiliza **SQLite** para almacenar la información del sistema.
-
-Se han implementado componentes para inicializar la base de datos y preparar las estructuras necesarias para autenticación, auditoría, políticas de contraseñas y control de sesiones.
-
-El módulo administrativo utiliza repositorios para separar las operaciones SQL de la lógica de negocio.
-
-El archivo local `data/tecnostock.db` no se incluye en el control de versiones.
-
-## 8. Patrones de diseño previstos
-
-Los siguientes patrones han sido seleccionados para su aplicación en las próximas etapas del sistema.
-
-| Patrón | Categoría | Aplicación prevista |
-|---|---|---|
-| Factory | Creacional | Creación de productos y servicios |
-| Facade | Estructural | Simplificación de operaciones relacionadas con ventas |
-| Proxy | Estructural | Control de acceso a reportes |
-| Command | Comportamiento | Representación de operaciones del carrito de compras |
-
-**Estado:** seleccionados y pendientes de implementación funcional.
-
-La arquitectura por capas y los servicios actuales no se presentan como sustitutos de estos patrones. Cada patrón deberá implementarse y justificarse mediante clases, funcionamiento y diagramas UML.
-
-## 9. Funcionalidades pendientes
-
-El desarrollo continuará con los siguientes componentes:
-
-- Gestión de clientes.
-- Catálogo de productos y servicios.
-- Control de inventario y existencias.
-- Movimientos de stock.
-- Registro de ventas.
-- Carrito y detalle de venta.
-- Cálculo de subtotales, descuentos y totales.
-- Generación de boletas o comprobantes.
-- Consultas y reportes.
-- Implementación de Factory, Facade, Proxy y Command.
-- Pruebas de los nuevos módulos.
-- Documentación UML integral.
-
-## 10. Pruebas automatizadas
-
-Se utiliza **JUnit 5** junto con Maven.
-
-La revisión del módulo de autenticación y administración obtuvo los siguientes resultados:
-
-| Clase de pruebas | Pruebas aprobadas |
-|---|---:|
-| EmployeeITTest | 5 |
-| PasswordUtilTest | 3 |
-| SessionServiceTest | 5 |
-| **Total** | **13** |
-
-**Resultado de la última verificación:** 13 pruebas ejecutadas, 0 fallos, 0 errores y `BUILD SUCCESS`.
-
-Estas pruebas cubren aspectos administrativos y de seguridad. No representan todavía una validación completa de los módulos futuros de ventas, clientes e inventario.
-
-## 11. Compilación y ejecución
-
-### Requisitos
-
-- JDK 21.
-- Apache Maven.
-- Sistema operativo compatible con Java Swing.
-
-### Compilar y ejecutar pruebas
+## Pruebas y validación
 
 ```bash
 mvn clean verify
 ```
 
-### Iniciar la aplicación
+Última ejecución reportada por el equipo (26 de noviembre de 2026): **112 pruebas, 0 fallos, 0 errores, 0 omitidas; BUILD SUCCESS**. Se compilaron 81 archivos fuente de producción y 24 archivos fuente de pruebas.
 
-```bash
-mvn exec:java
-```
+Las pruebas cubren migraciones, transacciones, clientes, catálogo, inventario, ventas, comprobantes, reportes, seguridad y patrones de diseño. El equipo también reportó 25 comprobaciones manuales exitosas entre los tres roles y funcionalidades generales, antes de la última limpieza de nomenclatura. Estas evidencias no equivalen a una garantía de ausencia de defectos ni a cobertura total del código.
 
-### Compilar el proyecto sin ejecutar la aplicación
+## Documentación y entrega
 
-```bash
-mvn clean package
-```
+- [Documentación del módulo administrador](docs/modulo-01-administrador/README.md): referencia de la primera etapa, con arquitectura, seguridad, pruebas y diagramas PlantUML.
+- Informe académico, UML integral y presentación: pendientes de consolidación para la entrega final.
 
-La aplicación prepara las estructuras de persistencia necesarias durante su inicialización.
+## Control de versiones
 
-## 12. Control de versiones
+Repositorio: <https://github.com/Jhon-Bas/TecnoStock>.
 
-Repositorio:
+`main` es la rama principal. La integración de módulos y patrones se desarrolla en `feature/integracion-modulos`, con validaciones antes de fusionar los cambios mediante Pull Request.
 
-https://github.com/Jhon-Bas/TecnoStock
-
-Organización de trabajo:
-
-- `main`: rama principal estable.
-- `jhon-develop`: rama personal de desarrollo.
-- `feature/autenticacion`: desarrollo del módulo de autenticación y administración.
-
-Los cambios deben verificarse antes de integrarse a la rama principal.
-
-## 13. Estado actual del proyecto
-
-**En desarrollo — primera etapa funcional verificada.**
-
-### Completado
-
-- Configuración del proyecto Maven.
-- Arquitectura inicial por capas.
-- Persistencia SQLite.
-- Autenticación y autorización por roles.
-- Seguridad de contraseñas.
-- Control de sesiones.
-- Administración de empleados y usuarios.
-- Restablecimiento administrativo de contraseñas.
-- Auditoría.
-- Dashboard administrativo con paneles integrados.
-- Trece pruebas automatizadas aprobadas.
-
-### En desarrollo o pendiente
-
-- Módulos operativos para gerente y empleado.
-- Productos, servicios y clientes.
-- Inventario y ventas.
-- Comprobantes y reportes.
-- Patrones de diseño seleccionados.
-- Diagramas UML y documentación final del sistema.
-
-## 14. Equipo de desarrollo
-
-- **Integrantes:** pendientes de completar.
-- **Curso:** Diseño de Patrones.
-- **Ciclo académico:** 2026-2.
-
-## 15. Entregables del proyecto
-
-La entrega final contempla:
-
-- Código fuente Java.
-- Proyecto Maven.
-- Documentación técnica.
-- Diagramas UML.
-- Informe final en PDF.
-- Presentación para exposición.
-- Evidencias de ejecución y pruebas.
-
----
-
-**TecnoStock — Proyecto Integrador de Diseño de Patrones, 2026-2.**
+**Estado:** implementación integrada y pruebas aprobadas; cierre de documentación académica pendiente.

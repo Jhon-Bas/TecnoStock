@@ -3,10 +3,7 @@ package pe.tecnostock;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
-import pe.tecnostock.config.DatabaseInitializer;
-import pe.tecnostock.config.AuditInitializer;
-import pe.tecnostock.config.PasswordPolicyInitializer;
-import pe.tecnostock.config.SessionVersionInitializer;
+import pe.tecnostock.config.migration.SchemaMigrator;
 import pe.tecnostock.service.BootstrapService;
 import pe.tecnostock.view.LoginFrame;
 import pe.tecnostock.view.SetupFrame;
@@ -17,9 +14,8 @@ import java.sql.SQLException;
 /**
  * Clase principal de TecnoStock.
  *
- * Inicializa la persistencia, auditoría,
- * seguridad de contraseñas y control de sesiones
- * antes de mostrar la interfaz.
+ * Actualiza el esquema de la base de datos mediante
+ * migraciones versionadas antes de mostrar la interfaz.
  */
 public class App {
 
@@ -28,18 +24,45 @@ public class App {
         // Configura la apariencia visual de Swing.
         FlatLightLaf.setup();
 
+        // Configura una apariencia consistente para toda la aplicación.
+        UIManager.put("defaultFont",
+                new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+
+        // Redondea los componentes interactivos.
+        UIManager.put("Component.arc", 12);
+        UIManager.put("Button.arc", 12);
+        UIManager.put("TextComponent.arc", 10);
+        UIManager.put("Component.focusWidth", 1);
+
+        // Unifica la altura y apariencia de las tablas.
+        UIManager.put("Table.rowHeight", 32);
+        UIManager.put("Table.showHorizontalLines", true);
+        UIManager.put("Table.showVerticalLines", false);
+        UIManager.put("Table.gridColor",
+                new java.awt.Color(226, 232, 240));
+        UIManager.put("Table.alternateRowColor",
+                new java.awt.Color(248, 250, 252));
+
+        UIManager.put("Table.selectionBackground",
+                new java.awt.Color(219, 234, 254));
+        UIManager.put("Table.selectionForeground",
+                new java.awt.Color(30, 58, 138));
+
+        UIManager.put("TableHeader.height", 36);
+        UIManager.put("TableHeader.background",
+                new java.awt.Color(241, 245, 249));
+        UIManager.put("TableHeader.foreground",
+                new java.awt.Color(30, 41, 59));
+
+        // Mantiene un estilo discreto en las barras de desplazamiento.
+        UIManager.put("ScrollBar.width", 12);
+        UIManager.put("ScrollBar.thumbArc", 999);
+        UIManager.put("ScrollBar.trackArc", 999);
+        UIManager.put("ScrollBar.showButtons", false);
+
         try {
-            // Prepara las tablas principales.
-            DatabaseInitializer.initialize();
-
-            // Prepara el historial de actividades.
-            AuditInitializer.initialize();
-
-            // Instala la política de contraseñas temporales.
-            PasswordPolicyInitializer.initialize();
-
-            // Instala la invalidación de sesiones antiguas.
-            SessionVersionInitializer.initialize();
+            // Actualiza el esquema de SQLite a la última versión.
+            new SchemaMigrator().migrate();
 
             BootstrapService bootstrapService =
                     new BootstrapService();
@@ -66,7 +89,7 @@ public class App {
                     JOptionPane.ERROR_MESSAGE
             );
 
-            e.printStackTrace();
+            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, "Error durante la operacion.", e);
         }
     }
 }

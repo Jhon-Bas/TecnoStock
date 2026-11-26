@@ -1,6 +1,17 @@
 
 package pe.tecnostock.view;
 
+import pe.tecnostock.modules.reports.view.ReportsPanel;
+
+import pe.tecnostock.modules.sales.view.SalesPanel;
+import pe.tecnostock.modules.sales.view.ReceiptsPanel;
+
+import pe.tecnostock.modules.inventory.view.InventoryPanel;
+
+import pe.tecnostock.modules.products.view.ProductsPanel;
+
+import pe.tecnostock.modules.customers.view.CustomersPanel;
+
 import pe.tecnostock.modules.admin.view.EmployeesPanel;
 import pe.tecnostock.modules.admin.view.PasswordResetPanel;
 
@@ -30,22 +41,22 @@ import java.util.concurrent.ExecutionException;
 public class MainFrame extends JFrame {
 
     private static final Color NAVY =
-            new Color(20, 36, 58);
+            new Color(15, 23, 42);
 
     private static final Color NAVY_LIGHT =
-            new Color(41, 73, 103);
+            new Color(30, 41, 59);
 
     private static final Color ACCENT =
-            new Color(38, 119, 191);
+            new Color(37, 99, 235);
 
     private static final Color BACKGROUND =
-            new Color(245, 248, 252);
+            new Color(241, 245, 249);
 
     private static final Color TEXT =
             new Color(35, 49, 67);
 
     private static final Color MUTED =
-            new Color(112, 126, 143);
+            new Color(71, 85, 105);
 
     private final User currentUser;
 
@@ -109,7 +120,7 @@ public class MainFrame extends JFrame {
 
         contentPanel.setBackground(BACKGROUND);
         contentPanel.setBorder(
-                new EmptyBorder(28, 30, 28, 30)
+                new EmptyBorder(22, 24, 22, 24)
         );
 
         root.add(contentPanel, BorderLayout.CENTER);
@@ -126,12 +137,12 @@ public class MainFrame extends JFrame {
 
         JPanel sidebar = new JPanel(new BorderLayout());
         sidebar.setBackground(NAVY);
-        sidebar.setPreferredSize(new Dimension(240, 0));
+        sidebar.setPreferredSize(new Dimension(250, 0));
 
         JLabel brand = new JLabel("  TECNOSTOCK");
         brand.setForeground(Color.WHITE);
         brand.setFont(
-                new Font("SansSerif", Font.BOLD, 22)
+                new Font("Segoe UI", Font.BOLD, 22)
         );
         brand.setBorder(
                 new EmptyBorder(30, 15, 28, 15)
@@ -156,28 +167,26 @@ public class MainFrame extends JFrame {
         // Los módulos comerciales serán compartidos
         // entre los roles según sus permisos.
         addSidebarButton(menu, "Clientes",
-                () -> showPendingModule("Clientes"));
+                () -> showCustomersPanel());
 
         addSidebarButton(menu, "Ventas",
-                () -> showPendingModule("Ventas"));
+                () -> showSalesPanel());
 
         addSidebarButton(menu, "Boletas",
-                () -> showPendingModule("Boletas"));
+                () -> showReceiptsPanel());
 
         if (role == Role.EMPLEADO) {
 
             addSidebarButton(
                     menu,
                     "Consultar productos",
-                    () -> showPendingModule(
-                            "Consultar productos"
-                    )
+                    () -> showProductsPanel()
             );
 
             addSidebarButton(
                     menu,
                     "Mis ventas",
-                    () -> showPendingModule("Mis ventas")
+                    () -> showSalesPanel()
             );
         }
 
@@ -186,19 +195,19 @@ public class MainFrame extends JFrame {
             addSidebarButton(
                     menu,
                     "Productos",
-                    () -> showPendingModule("Productos")
+                    () -> showProductsPanel()
             );
 
             addSidebarButton(
                     menu,
                     "Inventario",
-                    () -> showPendingModule("Inventario")
+                    () -> showInventoryPanel()
             );
 
             addSidebarButton(
                     menu,
                     "Reportes",
-                    () -> showPendingModule("Reportes")
+                    () -> showReportsPanel()
             );
         }
 
@@ -219,7 +228,15 @@ public class MainFrame extends JFrame {
             );
         }
 
-        sidebar.add(menu, BorderLayout.CENTER);
+        JScrollPane menuScroll = new JScrollPane(menu);
+        menuScroll.setBorder(BorderFactory.createEmptyBorder());
+        menuScroll.setOpaque(false);
+        menuScroll.getViewport().setBackground(NAVY);
+        menuScroll.setHorizontalScrollBarPolicy(
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        menuScroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        sidebar.add(menuScroll, BorderLayout.CENTER);
 
         JPanel footer = new JPanel();
         footer.setLayout(
@@ -300,11 +317,13 @@ public class MainFrame extends JFrame {
         );
 
         button.setFont(
-                new Font("SansSerif", Font.PLAIN, 14)
+                new Font("Segoe UI", Font.PLAIN, 14)
         );
 
         button.setForeground(Color.WHITE);
         button.setBackground(NAVY_LIGHT);
+        button.setBorderPainted(false);
+        button.setMargin(new Insets(10, 16, 10, 12));
         button.setFocusPainted(false);
         button.setCursor(
                 Cursor.getPredefinedCursor(
@@ -354,11 +373,9 @@ public class MainFrame extends JFrame {
             loadDashboardStatistics();
 
         } else {
-            // Los paneles del gerente y empleado
-            // recibirán indicadores propios
-            // al desarrollar sus módulos.
+
             contentPanel.add(
-                    createWelcomePanel(),
+                    createCommercialDashboard(),
                     BorderLayout.CENTER
             );
         }
@@ -383,14 +400,14 @@ public class MainFrame extends JFrame {
 
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(
-                new Font("SansSerif", Font.BOLD, 28)
+                new Font("Segoe UI", Font.BOLD, 32)
         );
         titleLabel.setForeground(TEXT);
 
         JLabel subtitleLabel = new JLabel(subtitle);
         subtitleLabel.setForeground(MUTED);
         subtitleLabel.setFont(
-                new Font("SansSerif", Font.PLAIN, 14)
+                new Font("Segoe UI", Font.PLAIN, 14)
         );
 
         header.add(titleLabel);
@@ -457,9 +474,7 @@ public class MainFrame extends JFrame {
         actions.setBackground(Color.WHITE);
         actions.setBorder(
                 BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                new Color(223, 230, 239)
-                        ),
+                        BorderFactory.createMatteBorder(3, 1, 1, 1, ACCENT),
                         new EmptyBorder(20, 20, 20, 20)
                 )
         );
@@ -468,7 +483,7 @@ public class MainFrame extends JFrame {
                 "Accesos rápidos"
         );
         actionsTitle.setFont(
-                new Font("SansSerif", Font.BOLD, 18)
+                new Font("Segoe UI", Font.BOLD, 18)
         );
         actionsTitle.setForeground(TEXT);
 
@@ -526,9 +541,7 @@ public class MainFrame extends JFrame {
 
         card.setBorder(
                 BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                new Color(223, 230, 239)
-                        ),
+                        BorderFactory.createMatteBorder(3, 1, 1, 1, ACCENT),
                         new EmptyBorder(22, 24, 22, 24)
                 )
         );
@@ -536,7 +549,7 @@ public class MainFrame extends JFrame {
         JLabel titleLabel = new JLabel(title);
         titleLabel.setForeground(MUTED);
         titleLabel.setFont(
-                new Font("SansSerif", Font.PLAIN, 14)
+                new Font("Segoe UI", Font.PLAIN, 14)
         );
 
         card.add(titleLabel, BorderLayout.NORTH);
@@ -553,7 +566,7 @@ public class MainFrame extends JFrame {
         JLabel label = new JLabel("—");
 
         label.setFont(
-                new Font("SansSerif", Font.BOLD, 36)
+                new Font("Segoe UI", Font.BOLD, 44)
         );
 
         label.setForeground(ACCENT);
@@ -567,13 +580,17 @@ public class MainFrame extends JFrame {
     private JButton createActionButton(String text) {
 
         JButton button = new JButton(text);
+        button.setBackground(ACCENT);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
 
         button.setFont(
-                new Font("SansSerif", Font.BOLD, 14)
+                new Font("Segoe UI", Font.BOLD, 14)
         );
 
         button.setPreferredSize(
-                new Dimension(0, 43)
+                new Dimension(220, 43)
         );
 
         button.setCursor(
@@ -651,7 +668,7 @@ public class MainFrame extends JFrame {
                 } catch (ExecutionException e) {
 
                     showStatisticsError();
-                    e.printStackTrace();
+                    java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, "Error durante la operacion.", e);
                 }
             }
         };
@@ -677,38 +694,118 @@ public class MainFrame extends JFrame {
         );
     }
 
-    /**
-     * Presenta una bienvenida temporal para los roles
-     * cuyos dashboards se desarrollarán después.
-     */
-    private JPanel createWelcomePanel() {
+    /** Presenta los indicadores comerciales según el rol autenticado. */
+    private JPanel createCommercialDashboard() {
+        boolean manager = currentUser.getRole() == Role.GERENTE;
+        JPanel dashboard = new JPanel(new BorderLayout(16, 16));
+        dashboard.setOpaque(false);
+        JPanel cards = new JPanel(new GridLayout(2, 2, 16, 16));
+        cards.setOpaque(false);
+        JLabel count = createValueLabel();
+        JLabel total = createValueLabel();
+        JLabel discounts = createValueLabel();
+        JLabel subtotal = createValueLabel();
+        cards.add(createStatCard(manager ? "Ventas de hoy" : "Mis ventas recientes", count));
+        cards.add(createStatCard(manager ? "Ingresos de hoy" : "Importe de ventas recientes", total));
+        cards.add(createStatCard("Descuentos", discounts));
+        cards.add(createStatCard("Subtotal", subtotal));
+        dashboard.add(cards, BorderLayout.CENTER);
 
-        JPanel panel = new JPanel(
-                new BorderLayout()
-        );
-
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(
-                new EmptyBorder(35, 35, 35, 35)
-        );
-
-        JLabel message = new JLabel(
-                "<html><h2>Bienvenido a TecnoStock</h2>"
-                + "<p>Tu espacio de trabajo está listo.</p>"
-                + "<p>Utiliza el menú lateral para navegar.</p>"
-                + "</html>"
-        );
-
-        message.setForeground(TEXT);
-        panel.add(message, BorderLayout.NORTH);
-
-        return panel;
+        JPanel actions = new JPanel(new GridLayout(0, 2, 10, 10));
+        actions.setOpaque(false);
+        addDashboardAction(actions, "Nueva venta", this::showSalesPanel);
+        addDashboardAction(actions, "Clientes", this::showCustomersPanel);
+        addDashboardAction(actions, "Boletas", this::showReceiptsPanel);
+        if (manager) {
+            addDashboardAction(actions, "Inventario", this::showInventoryPanel);
+            addDashboardAction(actions, "Reportes", this::showReportsPanel);
+        } else {
+            addDashboardAction(actions, "Consultar productos", this::showProductsPanel);
+        }
+        JButton refresh = createActionButton("Actualizar indicadores");
+        JLabel status = new JLabel(manager ? "Ventas emitidas en la fecha actual" : "Hasta 200 operaciones recientes propias; solo ventas emitidas");
+        status.setForeground(MUTED);
+        refresh.addActionListener(event -> openProtectedModule(() ->
+                loadCommercialStatistics(manager, count, total, discounts, subtotal, status, refresh)));
+        actions.add(refresh);
+        JPanel bottom = new JPanel(new BorderLayout(0, 12));
+        bottom.setOpaque(false);
+        bottom.add(status, BorderLayout.NORTH);
+        bottom.add(actions, BorderLayout.CENTER);
+        dashboard.add(bottom, BorderLayout.SOUTH);
+        loadCommercialStatistics(manager, count, total, discounts, subtotal, status, refresh);
+        return dashboard;
     }
 
-    /**
-     * Muestra una pantalla informativa para módulos
-     * que todavía no están implementados.
-     */
+    /** Conecta un acceso rápido con la navegación protegida de la ventana. */
+    private void addDashboardAction(JPanel panel, String text, Runnable action) {
+        JButton button = createActionButton(text);
+        button.addActionListener(event -> openProtectedModule(action));
+        panel.add(button);
+    }
+
+    /** Agrupa los importes comerciales sin perder precisión monetaria. */
+    private record CommercialStats(long count, java.math.BigDecimal total,
+            java.math.BigDecimal discounts, java.math.BigDecimal subtotal) {}
+
+    /** Consulta indicadores mediante los servicios autorizados, sin bloquear Swing. */
+    private void loadCommercialStatistics(boolean manager, JLabel count, JLabel total,
+            JLabel discounts, JLabel subtotal, JLabel status, JButton refresh) {
+        refresh.setEnabled(false);
+        for (JLabel label : new JLabel[]{count, total, discounts, subtotal}) label.setText("...");
+        new SwingWorker<CommercialStats, Void>() {
+            @Override
+            protected CommercialStats doInBackground() throws SQLException {
+                if (manager) {
+                    var access = new pe.tecnostock.modules.reports.proxy.ReportAccessProxy(
+                            new pe.tecnostock.modules.reports.service.ReportService(
+                                    new pe.tecnostock.modules.reports.repository.ReportRepository(),
+                                    new pe.tecnostock.service.AuthorizationService()),
+                            new pe.tecnostock.service.AuthorizationService());
+                    var today = java.time.LocalDate.now();
+                    var report = access.generateSales(currentUser, today, today);
+                    return new CommercialStats(report.saleCount(), report.total(), report.discounts(), report.subtotal());
+                }
+                var sales = new pe.tecnostock.modules.sales.facade.SalesFacade().listSales(currentUser);
+                long quantity = 0;
+                var amount = java.math.BigDecimal.ZERO;
+                var discount = java.math.BigDecimal.ZERO;
+                var base = java.math.BigDecimal.ZERO;
+                for (var sale : sales) {
+                    if (sale.getUserId() != currentUser.getId() || !"EMITIDA".equals(sale.getStatus())) continue;
+                    quantity++;
+                    amount = amount.add(sale.getTotal());
+                    discount = discount.add(sale.getDiscount());
+                    base = base.add(sale.getSubtotal());
+                }
+                return new CommercialStats(quantity, amount, discount, base);
+            }
+            @Override
+            protected void done() {
+                try {
+                    var stats = get();
+                    count.setText(Long.toString(stats.count()));
+                    total.setText(formatDashboardMoney(stats.total()));
+                    discounts.setText(formatDashboardMoney(stats.discounts()));
+                    subtotal.setText(formatDashboardMoney(stats.subtotal()));
+                    status.setText(manager ? "Ventas emitidas en la fecha actual" : "Hasta 200 operaciones recientes propias; solo ventas emitidas");
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    status.setText("Consulta interrumpida. Actualiza los indicadores.");
+                } catch (ExecutionException ex) {
+                    status.setText("No se pudieron cargar los indicadores. Actualiza o revisa la sesión.");
+                } finally {
+                    refresh.setEnabled(true);
+                }
+            }
+        }.execute();
+    }
+
+    /** Formatea importes en soles para las tarjetas comerciales. */
+    private String formatDashboardMoney(java.math.BigDecimal amount) {
+        return "S/ " + amount.setScale(2, java.math.RoundingMode.HALF_UP).toPlainString();
+    }
+
     /**
  * Presenta la auditoría dentro del dashboard.
  *
@@ -787,50 +884,143 @@ private void showAuditPanel() {
         contentPanel.revalidate();
         contentPanel.repaint();
     }
-    private void showPendingModule(String module) {
+    /**
+     * Presenta la gestión de clientes dentro de la ventana principal.
+     * Conserva el menú lateral y la sesión del usuario autenticado.
+     */
+    private void showCustomersPanel() {
 
         contentPanel.removeAll();
 
         contentPanel.add(
                 createHeader(
-                        module,
-                        "Módulo en desarrollo"
+                        "Gestión de clientes",
+                        "Registro, búsqueda y administración de clientes"
                 ),
                 BorderLayout.NORTH
         );
 
-        JPanel placeholder = new JPanel(
-                new BorderLayout()
-        );
-
-        placeholder.setBackground(Color.WHITE);
-        placeholder.setBorder(
-                new EmptyBorder(35, 35, 35, 35)
-        );
-
-        JLabel message = new JLabel(
-                "Este módulo se implementará próximamente."
-        );
-
-        message.setFont(
-                new Font("SansSerif", Font.PLAIN, 17)
-        );
-
-        message.setForeground(MUTED);
-
-        placeholder.add(
-                message,
-                BorderLayout.NORTH
-        );
-
         contentPanel.add(
-                placeholder,
+                new CustomersPanel(currentUser),
                 BorderLayout.CENTER
         );
 
         contentPanel.revalidate();
         contentPanel.repaint();
     }
+
+    /**
+     * Presenta el catálogo de productos y servicios.
+     * Las operaciones disponibles dependen de los permisos
+     * del usuario autenticado.
+     */
+    private void showProductsPanel() {
+
+        contentPanel.removeAll();
+
+        contentPanel.add(
+                createHeader(
+                        "Productos y servicios",
+                        "Consulta y gestión del catálogo comercial"
+                ),
+                BorderLayout.NORTH
+        );
+
+        contentPanel.add(
+                new ProductsPanel(currentUser),
+                BorderLayout.CENTER
+        );
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    /**
+     * Presenta el control de inventario dentro de la ventana principal.
+     * Permite gestionar existencias y consultar movimientos
+     * según los permisos del usuario autenticado.
+     */
+    private void showInventoryPanel() {
+
+        contentPanel.removeAll();
+
+        contentPanel.add(
+                createHeader(
+                        "Gestión de inventario",
+                        "Control de existencias y movimientos de stock"
+                ),
+                BorderLayout.NORTH
+        );
+
+        contentPanel.add(
+                new InventoryPanel(currentUser),
+                BorderLayout.CENTER
+        );
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    /**
+     * Presenta el registro de ventas dentro de la ventana principal.
+     * Conserva la sesión y los permisos del usuario autenticado.
+     */
+    private void showSalesPanel() {
+
+        contentPanel.removeAll();
+
+        contentPanel.add(
+                createHeader(
+                        "Gestión de ventas",
+                        "Registro de operaciones comerciales"
+                ),
+                BorderLayout.NORTH
+        );
+
+        contentPanel.add(
+                new SalesPanel(currentUser),
+                BorderLayout.CENTER
+        );
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    /**
+     * Presenta la consulta de comprobantes de venta.
+     * Permite acceder a las operaciones disponibles según el rol.
+     */
+    private void showReceiptsPanel() {
+
+        contentPanel.removeAll();
+
+        contentPanel.add(
+                createHeader(
+                        "Boletas de venta",
+                        "Consulta y exportación de comprobantes"
+                ),
+                BorderLayout.NORTH
+        );
+
+        contentPanel.add(
+                new ReceiptsPanel(currentUser),
+                BorderLayout.CENTER
+        );
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    /** Presenta los reportes comerciales en la ventana principal. */
+    private void showReportsPanel() {
+        contentPanel.removeAll();
+        contentPanel.add(createHeader("Reportes de ventas", "Consulta de indicadores y exportación"), BorderLayout.NORTH);
+        contentPanel.add(new ReportsPanel(currentUser), BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    
 
     /**
      * Revisa la sesión antes de permitir la navegación.

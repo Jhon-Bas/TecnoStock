@@ -409,7 +409,7 @@ public class PasswordResetPanel extends JPanel {
                         showError(
                                 "No se pudo actualizar la contraseña."
                         );
-                        cause.printStackTrace();
+                        java.util.logging.Logger.getLogger(PasswordResetPanel.class.getName()).log(java.util.logging.Level.SEVERE, "Error durante la operacion.", cause);
                     }
 
                     // Permite corregir los campos y reintentar.

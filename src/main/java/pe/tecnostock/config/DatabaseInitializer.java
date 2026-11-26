@@ -15,13 +15,23 @@ public final class DatabaseInitializer {
         // Impide instanciar esta clase utilitaria.
     }
 
+    /** Inicializa la estructura usando una conexión propia. */
+    public static void initialize() throws SQLException {
+        try (Connection connection = Database.getConnection()) {
+            initialize(connection);
+        }
+    }
+
     /**
      * Crea las tablas y ejecuta las migraciones pendientes.
+     *
+     * Se ejecuta dentro de una migración: el migrador abre
+     * la transacción y la confirma o la revierte.
      */
-    public static void initialize() throws SQLException {
+    public static void initialize(Connection connection)
+            throws SQLException {
 
-        try (Connection connection = Database.getConnection();
-             Statement statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
 
             // Almacena la información personal del empleado.
             statement.executeUpdate("""
@@ -93,10 +103,6 @@ public final class DatabaseInitializer {
                 ON empleados(nombres, apellidos)
                 """);
         }
-
-        System.out.println(
-                "Base de datos inicializada correctamente."
-        );
     }
 
     /**

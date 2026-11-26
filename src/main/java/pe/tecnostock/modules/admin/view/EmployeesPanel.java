@@ -508,6 +508,6 @@ public class EmployeesPanel extends JPanel {
         );
 
         // Conserva el detalle técnico en la consola.
-        ex.printStackTrace();
+        java.util.logging.Logger.getLogger(EmployeesPanel.class.getName()).log(java.util.logging.Level.SEVERE, "Error durante la operacion.", ex);
     }
 }

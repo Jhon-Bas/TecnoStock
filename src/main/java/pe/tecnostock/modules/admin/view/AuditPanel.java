@@ -258,7 +258,7 @@ public class AuditPanel extends JPanel {
                     }
 
                     if (cause != null) {
-                        cause.printStackTrace();
+                        java.util.logging.Logger.getLogger(AuditPanel.class.getName()).log(java.util.logging.Level.SEVERE, "Error durante la operacion.", cause);
                     }
                 }
             }
