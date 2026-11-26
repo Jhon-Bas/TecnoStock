@@ -807,10 +807,6 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Muestra una pantalla informativa para módulos
-     * que todavía no están implementados.
-     */
-    /**
  * Presenta la auditoría dentro del dashboard.
  *
  * Mantiene visible el menú lateral y reemplaza

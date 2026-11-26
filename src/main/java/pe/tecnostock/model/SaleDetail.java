@@ -1,12 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package pe.tecnostock.model;
 
 import java.math.BigDecimal;
 
-/** Entidad del registro comercial persistido. */
+/** Representa una línea de venta con cantidad, precio unitario e importe. */
 public class SaleDetail {
 
     private final int id;
@@ -16,9 +12,10 @@ public class SaleDetail {
     private final String itemCode;
     private final String itemName;
     private final int quantity;
-    private final BigDecimal precioUnitario;
+    private final BigDecimal unitPrice;
     private final BigDecimal subtotal;
 
+    /** Construye el detalle con los datos comerciales registrados en la venta. */
     public SaleDetail(
             int id,
             int saleId,
@@ -27,7 +24,7 @@ public class SaleDetail {
             String itemCode,
             String itemName,
             int quantity,
-            BigDecimal precioUnitario,
+            BigDecimal unitPrice,
             BigDecimal subtotal
     ) {
         this.id = id;
@@ -37,7 +34,7 @@ public class SaleDetail {
         this.itemCode = itemCode;
         this.itemName = itemName;
         this.quantity = quantity;
-        this.precioUnitario = precioUnitario != null ? precioUnitario : BigDecimal.ZERO;
+        this.unitPrice = unitPrice != null ? unitPrice : BigDecimal.ZERO;
         this.subtotal = subtotal != null ? subtotal : BigDecimal.ZERO;
     }
 
@@ -70,7 +67,7 @@ public class SaleDetail {
     }
 
     public BigDecimal getUnitPrice() {
-        return precioUnitario;
+        return unitPrice;
     }
 
     public BigDecimal getSubtotal() {

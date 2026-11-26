@@ -56,19 +56,20 @@ public abstract sealed class CommercialItem implements Sellable
         return code;
     }
 
+    /** Normaliza y valida el código comercial. */
     public final void setCode(String code) {
 
-        String valor = code == null
+        String value = code == null
                 ? "" : code.trim().toUpperCase();
 
-        if (!CODE.matcher(valor).matches()) {
+        if (!CODE.matcher(value).matches()) {
             throw new IllegalArgumentException(
                     "El código debe tener entre 3 y 20 caracteres: "
                     + "letras, números o guion."
             );
         }
 
-        this.code = valor;
+        this.code = value;
     }
 
     @Override
@@ -76,17 +77,18 @@ public abstract sealed class CommercialItem implements Sellable
         return name;
     }
 
+    /** Valida el nombre comercial. */
     public final void setName(String name) {
 
-        String valor = name == null ? "" : name.trim();
+        String value = name == null ? "" : name.trim();
 
-        if (valor.isEmpty() || valor.length() > 120) {
+        if (value.isEmpty() || value.length() > 120) {
             throw new IllegalArgumentException(
                     "El nombre es obligatorio (máximo 120 caracteres)."
             );
         }
 
-        this.name = valor;
+        this.name = value;
     }
 
     public String getDescription() {
@@ -95,16 +97,16 @@ public abstract sealed class CommercialItem implements Sellable
 
     public final void setDescription(String description) {
 
-        String valor = description == null || description.isBlank()
+        String value = description == null || description.isBlank()
                 ? null : description.trim();
 
-        if (valor != null && valor.length() > 200) {
+        if (value != null && value.length() > 200) {
             throw new IllegalArgumentException(
                     "La descripción no puede superar 200 caracteres."
             );
         }
 
-        this.description = valor;
+        this.description = value;
     }
 
     @Override
@@ -128,29 +130,32 @@ public abstract sealed class CommercialItem implements Sellable
     /**
      * Valida un importe y lo deja con exactamente 2 decimales.
      *
-     * @param permiteCero true si 0.00 es un valor aceptable
+     * @param value importe que se valida
+     * @param field nombre del campo para los mensajes de validación
+     * @param allowZero true si 0.00 es un valor aceptable
+     * @return importe normalizado a dos decimales
      */
     protected static BigDecimal normalizePrice(
-            BigDecimal valor,
+            BigDecimal value,
             String field,
-            boolean permiteCero
+            boolean allowZero
     ) {
-        boolean valido = valor != null
-                && valor.stripTrailingZeros().scale() <= 2
-                && valor.compareTo(MAX_PRICE) <= 0
-                && (permiteCero
-                    ? valor.signum() >= 0
-                    : valor.signum() > 0);
+        boolean valid = value != null
+                && value.stripTrailingZeros().scale() <= 2
+                && value.compareTo(MAX_PRICE) <= 0
+                && (allowZero
+                    ? value.signum() >= 0
+                    : value.signum() > 0);
 
-        if (!valido) {
+        if (!valid) {
             throw new IllegalArgumentException(
-                    field + (permiteCero
+                    field + (allowZero
                             ? " no puede ser negativo"
                             : " debe ser mayor que cero")
                     + " y tener como máximo 2 decimales."
             );
         }
 
-        return valor.setScale(2);
+        return value.setScale(2);
     }
 }

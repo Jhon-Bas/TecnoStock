@@ -113,7 +113,9 @@ public class InventoryRepository {
     /**
      * Últimos movimientos, del más reciente al más antiguo.
      *
-     * @param productoId 0 para todos los productos
+     * @param productId 0 para todos los productos
+     * @param limit cantidad máxima de movimientos
+     * @return movimientos ordenados del más reciente al más antiguo
      */
     public List<InventoryMovement> listMovements(
             int productId,

@@ -25,22 +25,22 @@ public final class Styles {
     }
 
     /** Título y subtítulo que encabezan cada pantalla. */
-    public static JPanel header(String title, String subtitulo) {
+    public static JPanel header(String title, String subtitle) {
 
-        JLabel tituloLabel = new JLabel(title);
-        tituloLabel.setFont(new Font("SansSerif", Font.BOLD, 28));
-        tituloLabel.setForeground(TEXT);
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 28));
+        titleLabel.setForeground(TEXT);
 
-        JLabel subtituloLabel = new JLabel(subtitulo);
-        subtituloLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        subtituloLabel.setForeground(MUTED);
+        JLabel subtitleLabel = new JLabel(subtitle);
+        subtitleLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        subtitleLabel.setForeground(MUTED);
 
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setOpaque(false);
-        header.add(tituloLabel);
+        header.add(titleLabel);
         header.add(Box.createVerticalStrut(7));
-        header.add(subtituloLabel);
+        header.add(subtitleLabel);
 
         return header;
     }
@@ -48,37 +48,37 @@ public final class Styles {
     /** Botón del menú lateral. */
     public static JButton navigationButton(String text) {
 
-        JButton boton = new JButton(text);
-        boton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 43));
-        boton.setPreferredSize(new Dimension(208, 43));
-        boton.setHorizontalAlignment(SwingConstants.LEFT);
-        boton.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        boton.setForeground(Color.WHITE);
-        boton.setBackground(MEDIUM_BLUE);
-        boton.setFocusPainted(false);
-        boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        boton.putClientProperty("JButton.buttonType", "roundRect");
+        JButton button = new JButton(text);
+        button.setAlignmentX(Component.LEFT_ALIGNMENT);
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 43));
+        button.setPreferredSize(new Dimension(208, 43));
+        button.setHorizontalAlignment(SwingConstants.LEFT);
+        button.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(MEDIUM_BLUE);
+        button.setFocusPainted(false);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.putClientProperty("JButton.buttonType", "roundRect");
 
-        return boton;
+        return button;
     }
 
     /** Botón de acción dentro del contenido. */
     public static JButton actionButton(String text) {
 
-        JButton boton = new JButton(text);
-        boton.setFont(new Font("SansSerif", Font.BOLD, 14));
-        Dimension naturalSize = boton.getPreferredSize();
+        JButton button = new JButton(text);
+        button.setFont(new Font("SansSerif", Font.BOLD, 14));
+        Dimension naturalSize = button.getPreferredSize();
 
         // Conserva un ancho suficiente para mostrar el texto.
-        boton.setPreferredSize(new Dimension(
+        button.setPreferredSize(new Dimension(
                 naturalSize.width + 16,
                 Math.max(43, naturalSize.height)
         ));
-        boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        boton.putClientProperty("JButton.buttonType", "roundRect");
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.putClientProperty("JButton.buttonType", "roundRect");
 
-        return boton;
+        return button;
     }
 
     /** Borde de las tarjetas blancas: línea fina más margen interno. */
@@ -92,24 +92,24 @@ public final class Styles {
     /** Etiqueta numérica grande para los indicadores. */
     public static JLabel valueLabel() {
 
-        JLabel etiqueta = new JLabel("—");
-        etiqueta.setFont(new Font("SansSerif", Font.BOLD, 36));
-        etiqueta.setForeground(ACCENT);
+        JLabel label = new JLabel("—");
+        label.setFont(new Font("SansSerif", Font.BOLD, 36));
+        label.setForeground(ACCENT);
 
-        return etiqueta;
+        return label;
     }
 
     /** Tarjeta con un título y un valor. */
     public static JPanel card(String title, JLabel value) {
 
-        JLabel tituloLabel = new JLabel(title);
-        tituloLabel.setForeground(MUTED);
-        tituloLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setForeground(MUTED);
+        titleLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         JPanel card = new JPanel(new BorderLayout(8, 8));
         card.setBackground(Color.WHITE);
         card.setBorder(cardBorder(22, 24));
-        card.add(tituloLabel, BorderLayout.NORTH);
+        card.add(titleLabel, BorderLayout.NORTH);
         card.add(value, BorderLayout.CENTER);
 
         return card;

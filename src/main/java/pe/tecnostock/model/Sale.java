@@ -1,53 +1,50 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package pe.tecnostock.model;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-/** Entidad del registro comercial persistido. */
+/** Representa una venta registrada y sus detalles comerciales. */
 public class Sale {
 
     private final int id;
     private final String receiptNumber;
     private final int customerId;
-    private final String nombreCliente;
-    private final String documentoCliente;
+    private final String customerName;
+    private final String customerDocument;
     private final int userId;
     private final BigDecimal subtotal;
     private final BigDecimal discount;
     private final BigDecimal total;
-    private final String estado;
-    private final String fecha;
+    private final String status;
+    private final String date;
     private final List<SaleDetail> details;
 
+    /** Construye una venta con importes no nulos y una copia inmutable de sus detalles. */
     public Sale(
             int id,
             String receiptNumber,
             int customerId,
-            String nombreCliente,
-            String documentoCliente,
+            String customerName,
+            String customerDocument,
             int userId,
             BigDecimal subtotal,
             BigDecimal discount,
             BigDecimal total,
-            String estado,
-            String fecha,
+            String status,
+            String date,
             List<SaleDetail> details
     ) {
         this.id = id;
         this.receiptNumber = receiptNumber;
         this.customerId = customerId;
-        this.nombreCliente = nombreCliente;
-        this.documentoCliente = documentoCliente;
+        this.customerName = customerName;
+        this.customerDocument = customerDocument;
         this.userId = userId;
         this.subtotal = subtotal != null ? subtotal : BigDecimal.ZERO;
         this.discount = discount != null ? discount : BigDecimal.ZERO;
         this.total = total != null ? total : BigDecimal.ZERO;
-        this.estado = estado;
-        this.fecha = fecha;
+        this.status = status;
+        this.date = date;
         this.details = details == null ? List.of() : List.copyOf(details);
     }
 
@@ -64,11 +61,11 @@ public class Sale {
     }
 
     public String getCustomerName() {
-        return nombreCliente;
+        return customerName;
     }
 
     public String getCustomerDocument() {
-        return documentoCliente;
+        return customerDocument;
     }
 
     public int getUserId() {
@@ -88,11 +85,11 @@ public class Sale {
     }
 
     public String getStatus() {
-        return estado;
+        return status;
     }
 
     public String getDate() {
-        return fecha;
+        return date;
     }
 
     public List<SaleDetail> getDetails() {

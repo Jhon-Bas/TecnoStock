@@ -74,7 +74,11 @@ public class InventoryService {
      * Registra un movimiento hecho por el currentUser desde la pantalla de
      * inventario.
      *
-     * @param cantidad unidades; en un AJUSTE, el stock contado
+     * @param currentUser usuario que registra el movimiento
+     * @param productId identificador interno del producto
+     * @param type tipo de movimiento
+     * @param quantity unidades; en un AJUSTE, el stock contado
+     * @param reason motivo del movimiento
      */
     public void register(
             User currentUser,

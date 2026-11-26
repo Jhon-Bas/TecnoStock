@@ -270,18 +270,18 @@ public class ProductsPanel extends JPanel {
 
     private static Object[] row(CommercialItem item) {
 
-        String estado = item.isActive() ? "Activo" : "Inactivo";
+        String status = item.isActive() ? "Activo" : "Inactivo";
 
         return switch (item) {
             case Product p -> new Object[] {
                     p.getType(), p.getCode(), p.getName(),
                     p.getCategory().name(),
                     soles(p.getPurchasePrice()), soles(p.getSalePrice()),
-                    p.getCurrentStock(), estado, p.getId()
+                    p.getCurrentStock(), status, p.getId()
             };
             case ServiceItem s -> new Object[] {
                     s.getType(), s.getCode(), s.getName(),
-                    "—", "—", soles(s.getSalePrice()), "—", estado, s.getId()
+                    "—", "—", soles(s.getSalePrice()), "—", status, s.getId()
             };
         };
     }
@@ -323,22 +323,22 @@ public class ProductsPanel extends JPanel {
 
     private void changeStatus() {
 
-        boolean activar = !selected.isActive();
+        boolean activate = !selected.isActive();
 
-        int opcion = JOptionPane.showConfirmDialog(
+        int option = JOptionPane.showConfirmDialog(
                 this,
-                (activar ? "¿Reactivar " : "¿Desactivar ")
+                (activate ? "¿Reactivar " : "¿Desactivar ")
                         + selected.getName() + "?",
                 "Confirmar",
                 JOptionPane.YES_NO_OPTION
         );
 
-        if (opcion != JOptionPane.YES_OPTION) {
+        if (option != JOptionPane.YES_OPTION) {
             return;
         }
 
         try {
-            service.changeStatus(currentUser, selected, activar);
+            service.changeStatus(currentUser, selected, activate);
 
             clearForm();
             loadItems();
